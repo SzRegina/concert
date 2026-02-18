@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Concerts } from "./components/Concert";
-import { ConcertCard } from "./pages/ConcertCard";
+import { ConcertCard } from "./components/ConcertCard";
 
 type Page = "home" | "login";
 
@@ -60,7 +60,6 @@ const logout = async () => {
     return;
   }
   
-
     setLoggedIn(false);
     setMessage("Kijelentkezve.");
   };
@@ -220,26 +219,7 @@ const logout = async () => {
               </div>
             </section>
 
-            <Concerts>
-              {({ concerts, loading, error }) => (
-                <section className="section">
-                  <div className="container">
-                    <h2>Összes koncert</h2>
-
-                    {loading && <p>Betöltés…</p>}
-                    {error && <p>{error}</p>}
-
-                    {!loading && !error && (
-                      <div className="grid">
-                        {concerts.map((c) => (
-                          <ConcertCard key={c.id} concert={c} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </section>
-              )}
-            </Concerts>
+            <Concerts/>
           </>
         )}
 

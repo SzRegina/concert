@@ -1,47 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ConcertCard } from "./ConcertCard";
 
-export type ConcertStatus = 0 | 1 | 2;
-
-export type Concert = {
-  id: number;
-  name: string;
-  performer_id: number;
-  room_id: number;
-  date: string; 
-  base_price: number;
-  description: string;
-  status: ConcertStatus;
-  created_at: string;
-  updated_at: string;
-};
-
-const API_BASE = "http://localhost:8000/api";
+const API = "http://localhost:8000/api/concerts";
 
 export function Concerts(props: {
-  children: (args: {
-    concerts: Concert[];
-    loading: boolean;
-    error: string;
-  }) => React.ReactNode;
+  mode?: "home" | "page"; 
 }) {
-  const [concerts, setConcerts] = React.useState<Concert[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState("");
+  const mode = props.mode ?? "home";
 
-  React.useEffect(() => {
+  const [concerts, setConcerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
     let alive = true;
 
     async function load() {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(`${API_BASE}/concerts`, {
+        const res = await fetch(API, {
           method: "GET",
           credentials: "include",
           headers: { Accept: "application/json" },
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as Concert[];
+        const data = await res.json();
         if (alive) setConcerts(data);
       } catch {
         if (alive) setError("Nem sikerült betölteni a koncerteket.");
@@ -56,5 +41,34 @@ export function Concerts(props: {
     };
   }, []);
 
-  return <>{props.children({ concerts, loading, error })}</>;
+  useEffect(() => {
+    setIndex((i) => Math.min(i, Math.max(0, concerts.length - 1)));
+  }, [concerts.length]);
+
+  if (loading) return <p>Betöltés…</p>;
+  if (error) return <p>{error}</p>;
+  if (concerts.length === 0) return <p>Nincs koncert.</p>;
+
+  const next = index < concerts.length - 1;
+
+  const list = mode === "home" ? concerts.slice(index) : concerts;
+
+  return (
+    <div>
+      {mode === "home" && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+        <div className="cards">
+          {list.map((c) => (
+            <ConcertCard key={c.id} concert={c} />
+          ))}
+        </div>
+          <button disabled={!next} onClick={() => setIndex((i) => i + 1)}>
+            ▶
+          </button>
+        </div>
+      )}
+
+
+    </div>
+  );
 }
