@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Search, SearchFilters } from "../components/Search";
-import { Concerts } from "../components/Concert";
-import { ConcertCard } from "../components/ConcertCard";
-import { Footer } from "../components/Footer";
+import { Search, SearchFilters } from "../../components/Search";
+import { Concerts } from "../../components/Concert";
+import { ConcertCard } from "../../components/ConcertCard";
+import { Footer } from "../../components/Footer";
 
 export function Home() {
   const [filters, setFilters] = useState<SearchFilters>({

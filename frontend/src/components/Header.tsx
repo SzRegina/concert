@@ -41,7 +41,6 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
                   right: 0,
                   top: "calc(100% + 8px)",
                   minWidth: 220,
-                  zIndex: 10,
                 }}
               >
                 <div style={{ marginBottom: 10, opacity: 0.85 }}>
@@ -50,12 +49,8 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
 
                 <div style={{ display: "grid", gap: 8 }}>
                   <ul>
-                  <li className="btn" onClick={() => alert("Adataim (később)")}>
-                    Adataim
-                  </li>
-                  <li className="btn" onClick={() => alert("Vásárlásaim (később)")}>
-                    Vásárlásaim
-                  </li>
+                  <li className="btn" onClick={() => alert("Adataim")}>Adataim</li>
+                  <li className="btn" onClick={() => alert("Vásárlásaim")}>Vásárlásaim</li>
                   <li
                     className="btn"
                     onClick={() => {
