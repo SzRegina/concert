@@ -1,31 +1,11 @@
-import { useMemo, useState } from "react";
-import { logAction } from "../../utility/logger";
-
-type Role = "Admin" | "Jegykezelő" | "Felhasználó";
-type UserRow = { id: number; username: string; email: string; name: string; role: Role };
-
-type NewUserDraft = {
-  username: string;
-  email: string;
-  name: string;
-  role: Role;
-};
+import { useState } from "react";
+import { useUsers, type Role, type UserRow } from "../../hooks/useUsers";
 
 export function UsersPage() {
-  const initial: UserRow[] = useMemo(
-    () => [
-      { id: 1, username: "ÉN", email: "xy@gmail.com", name: "ÉN", role: "Admin" },
-      { id: 2, username: "TesztElek", email: "tesztelek@gmail.com", name: "Teszt Elek", role: "Jegykezelő" },
-      { id: 3, username: "mindigKések", email: "mindigkesek@gmail.com", name: "Mindig Kések", role: "Felhasználó" },
-    ],
-    []
-  );
+  const { users, loading, error, addUser, updateRole, removeUser, reload } = useUsers();
 
-  const [users, setUsers] = useState<UserRow[]>(initial);
-
-  // Inline "új felhasználó" sor kezelése
   const [isAdding, setIsAdding] = useState(false);
-  const [draft, setDraft] = useState<NewUserDraft>({
+  const [draft, setDraft] = useState<Omit<UserRow, "id">>({
     username: "",
     email: "",
     name: "",
@@ -42,56 +22,36 @@ export function UsersPage() {
     setDraft({ username: "", email: "", name: "", role: "Felhasználó" });
   };
 
-  const saveAdd = () => {
-    // minimál validálás (csak hogy ne legyen üres)
-    if (!draft.username.trim() || !draft.email.trim() || !draft.name.trim()) {
-      alert("Kérlek töltsd ki a Profilnév / Email / Név mezőket!");
-      return;
-    }
-
-    setUsers((prev) => {
-      const nextId = prev.length ? Math.max(...prev.map((u) => u.id)) + 1 : 1;
-      const newUser: UserRow = {
-        id: nextId,
+  const saveAdd = async () => {
+    try {
+      await addUser({
         username: draft.username.trim(),
         email: draft.email.trim(),
         name: draft.name.trim(),
         role: draft.role,
-      };
-
-      logAction?.({ type: "USER_ADD", payload: newUser } as any);
-      // ha nincs loggered, ezt használd:
-      // console.log("USER_ADD", newUser);
-
-      return [...prev, newUser];
-    });
-
-    setIsAdding(false);
-    setDraft({ username: "", email: "", name: "", role: "Felhasználó" });
+      });
+      setIsAdding(false);
+      setDraft({ username: "", email: "", name: "", role: "Felhasználó" });
+    } catch (e: any) {
+      alert(e?.message ?? "Nem sikerült menteni.");
+    }
   };
 
-  const updateRole = (id: number, role: Role) => {
-    setUsers((prev) => {
-      const before = prev.find((u) => u.id === id);
-      const next = prev.map((u) => (u.id === id ? { ...u, role } : u));
-
-      logAction?.({
-        type: "USER_ROLE_UPDATE",
-        payload: { userId: id, before, after: next.find((u) => u.id === id) },
-      } as any);
-
-      return next;
-    });
+  const onUpdateRole = async (id: number, role: Role) => {
+    try {
+      await updateRole(id, role);
+    } catch (e: any) {
+      alert(e?.message ?? "Nem sikerült módosítani a szerepkört.");
+    }
   };
 
-  const removeUser = (id: number) => {
-    setUsers((prev) => {
-      const removed = prev.find((u) => u.id === id);
-
-      logAction?.({ type: "USER_DELETE", payload: { userId: id, removed } } as any);
-
-      return prev.filter((u) => u.id !== id);
-    });
+  const onRemove = async (id: number) => {
+    if (!window.confirm("Biztosan törlöd a profilt?")) return;
+    try {
+      await removeUser(id);
+    } catch (e: any) {
+      alert(e?.message ?? "Nem sikerült törölni.");
+    }
   };
 
   return (
@@ -99,21 +59,29 @@ export function UsersPage() {
       <div className="adminCardHead">
         <h2>Felhasználók</h2>
 
-        {!isAdding ? (
-          <button className="adminBtn adminBtn--solid" type="button" onClick={startAdd}>
-            + Új felhasználó felvétele
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button className="adminBtn" type="button" onClick={reload} disabled={loading}>
+            Frissítés
           </button>
-        ) : (
-          <div style={{ display: "flex", gap: 10 }}>
-            <button className="adminBtn adminBtn--solid" type="button" onClick={saveAdd}>
-              Mentés
+
+          {!isAdding ? (
+            <button className="adminBtn adminBtn--solid" type="button" onClick={startAdd}>
+              + Új felhasználó felvétele
             </button>
-            <button className="adminBtn" type="button" onClick={cancelAdd}>
-              Mégse
-            </button>
-          </div>
-        )}
+          ) : (
+            <>
+              <button className="adminBtn adminBtn--solid" type="button" onClick={saveAdd}>
+                Mentés
+              </button>
+              <button className="adminBtn" type="button" onClick={cancelAdd}>
+                Mégse
+              </button>
+            </>
+          )}
+        </div>
       </div>
+
+      {error && <p style={{ marginTop: 10, color: "red" }}>{error}</p>}
 
       <div className="adminTableWrap">
         <table className="adminTable">
@@ -128,8 +96,15 @@ export function UsersPage() {
           </thead>
 
           <tbody>
-            {/* meglévő felhasználók */}
-            {users.map((u) => (
+            {loading && (
+              <tr>
+                <td colSpan={5} style={{ padding: 14, opacity: 0.8 }}>
+                  Betöltés…
+                </td>
+              </tr>
+            )}
+
+            {!loading && users.map((u) => (
               <tr key={u.id}>
                 <td>{u.username}</td>
                 <td>{u.email}</td>
@@ -138,7 +113,7 @@ export function UsersPage() {
                   <select
                     className="adminSelect"
                     value={u.role}
-                    onChange={(e) => updateRole(u.id, e.target.value as Role)}
+                    onChange={(e) => onUpdateRole(u.id, e.target.value as Role)}
                   >
                     <option value="Admin">Admin</option>
                     <option value="Jegykezelő">Jegykezelő</option>
@@ -146,14 +121,13 @@ export function UsersPage() {
                   </select>
                 </td>
                 <td>
-                  <button className="adminDanger" type="button" onClick={() => removeUser(u.id)}>
+                  <button className="adminDanger" type="button" onClick={() => onRemove(u.id)}>
                     Profil törlése
                   </button>
                 </td>
               </tr>
             ))}
 
-            {/* inline új felhasználó sor (placeholder szerkeszthető) */}
             {isAdding && (
               <tr>
                 <td>
@@ -191,9 +165,7 @@ export function UsersPage() {
                     <option value="Felhasználó">Felhasználó</option>
                   </select>
                 </td>
-                <td style={{ color: "rgba(243,241,255,.7)", fontWeight: 700 }}>
-                  Új felhasználó…
-                </td>
+                <td style={{ color: "rgba(243,241,255,.7)", fontWeight: 700 }}>Új felhasználó…</td>
               </tr>
             )}
           </tbody>

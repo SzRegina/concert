@@ -1,27 +1,23 @@
 import React, { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRole } from "../utility/Auth";
+import { useAuth } from "../hooks/useAuth";
 
-const API = "http://localhost:8000/api";
-
-export function Login(props: { onLogin: (u: any | null) => void }) {
+export function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const auth = useAuth();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setLoading(true);
     setError("");
-    setSuccess("");
 
-    const form = e.currentTarget;
-    const fd = new FormData(form);
-
-    const email = fd.get("email") as string;
-    const password = fd.get("password") as string;
+    const fd = new FormData(e.currentTarget);
+    const email = (fd.get("email") as string) ?? "";
+    const password = (fd.get("password") as string) ?? "";
 
     if (!email || !password) {
       setError("Minden mező kitöltése kötelező.");
@@ -30,50 +26,16 @@ export function Login(props: { onLogin: (u: any | null) => void }) {
     }
 
     try {
-      const res = await fetch(`${API}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const user = await auth.login(email, password);
+      const role = getRole(user);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.message ?? "Sikertelen belépés");
+      if (role === 0) {
+        navigate("/admin", { replace: true });
+      } else if (role === 2) {
+        navigate("/user", { replace: true });
+      } else {
+        navigate("/", { replace: true });
       }
-
-      localStorage.setItem("token", data.access_token);
-
-      if (!res.ok) {
-        let msg = `Sikertelen belépés (HTTP ${res.status}).`;
-        try {
-          const data = await res.json();
-          msg = data?.message ?? msg;
-        } catch {}
-        throw new Error(msg);
-      }
-
-      const meRes = await fetch(`${API}/user`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          Accept: "application/json",
-        },
-      });
-
-const user = meRes.ok ? await meRes.json() : { email };
-props.onLogin(user);
-
-const role = getRole(user);
-
-if (role === 0) {
-  navigate("/admin", { replace: true });
-} else if (role === 2) {
-  navigate("/user", { replace: true });
-} else {
-}
     } catch (err: any) {
       setError(err?.message ?? "Nem sikerült belépni.");
     } finally {
@@ -90,8 +52,8 @@ if (role === 0) {
           <form
             onSubmit={handleSubmit}
             className="searchPanel"
-            style={{ gridTemplateColumns: "1fr 1fr auto" }}>
-
+            style={{ gridTemplateColumns: "1fr 1fr auto" }}
+          >
             <div className="field">
               <label className="label">E-mail</label>
               <input className="input" name="email" type="email" required />
@@ -99,11 +61,7 @@ if (role === 0) {
 
             <div className="field">
               <label className="label">Jelszó</label>
-              <input
-                className="input"
-                name="password"
-                type="password"
-                required/>
+              <input className="input" name="password" type="password" required />
             </div>
 
             <button className="searchBtn" type="submit" disabled={loading}>
@@ -112,9 +70,6 @@ if (role === 0) {
           </form>
 
           {error && <p style={{ marginTop: 10, color: "red" }}>{error}</p>}
-          {success && (
-            <p style={{ marginTop: 10, color: "green" }}>{success}</p>
-          )}
         </div>
       </div>
     </section>

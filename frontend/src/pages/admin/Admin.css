@@ -96,6 +96,11 @@
   padding: 18px;
 }
 
+td{
+ width: 20%;
+ text-align: center;
+}
+
 .adminCard{
   border: 1px solid var(--line);
   border-radius: 18px;

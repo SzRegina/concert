@@ -1,55 +1,84 @@
-import { useMemo, useState } from "react";
-import { logAction } from "../../utility/logger";
+import { useEffect, useMemo, useState } from "react";
+import { useConcerts } from "../../hooks/useConcerts";
+import { MultiplierKey, useSeatLayout } from "../../hooks/useSeatLayout";
 
-type SeatCategory = "A" | "B" | "C";
+const MULTI_ORDER: MultiplierKey[] = ["M1", "M2", "M3"];
 
-type ShowMini = {
-  id: string;
-  title: string;
-  venue: string;
-  room: string;
+const MULTI_UI: Record<MultiplierKey, { label: string; seatClass: string }> = {
+  M1: { label: "1. ", seatClass: "adminSeat--C" },
+  M2: { label: "2. ", seatClass: "adminSeat--B" },
+  M3: { label: "3. ", seatClass: "adminSeat--A" },
 };
 
-type Prices = {
-  A: number;
-  B: number;
-  C: number;
-};
+function nextMultiplier(current: MultiplierKey): MultiplierKey {
+  const i = MULTI_ORDER.indexOf(current);
+  return MULTI_ORDER[(i + 1) % MULTI_ORDER.length];
+}
+
+function seatId(r: number, c: number) {
+  return `R${r}C${c}`;
+}
 
 export function SeatsPage() {
-  const shows = useMemo<ShowMini[]>(
-    () => [
-      { id: "AB001", title: "Hans Zimmer Europe Tour", venue: "Budapest - MVM Dome", room: "101" },
-      { id: "BB101", title: "Metallica M72", venue: "Budapest - Papp László Sportaréna", room: "404" },
-      { id: "CB303", title: "Gamer Symphony", venue: "Debrecen - HALL", room: "112" },
-    ],
-    []
+  const {
+    concerts,
+    loading: concertsLoading,
+    error: concertsError,
+    reload: reloadConcerts,
+  } = useConcerts();
+
+  const [selectedId, setSelectedId] = useState<number | "">("");
+  const selected = useMemo(
+    () => concerts.find((c) => c.id === selectedId),
+    [concerts, selectedId],
   );
 
-  const [selectedId, setSelectedId] = useState<string>(shows[0]?.id ?? "");
-  const selected = shows.find((s) => s.id === selectedId);
+  useEffect(() => {
+    if (selectedId === "" && concerts.length > 0) setSelectedId(concerts[0].id);
+  }, [concerts, selectedId]);
 
-  // demo árak (később show-hoz kötjük)
-  const [prices, setPrices] = useState<Prices>({ A: 15000, B: 10000, C: 8500 });
+  const {
+    layout,
+    setLayout,
+    loading: layoutLoading,
+    error: layoutError,
+    save,
+  } = useSeatLayout(selectedId);
 
-  // 5x5 seatmap (később dinamikus)
-  const rows = ["A", "B", "C", "D", "E"];
-  const cols = [1, 2, 3, 4, 5];
+  const rows = selected?.room_total_rows ?? 0;
+  const cols = selected?.room_total_columns ?? 0;
+  const basePrice = selected?.base_price ?? 0;
 
-  const getCategory = (r: string): SeatCategory => {
-    // elöl drágább: A-B -> A kategória, C-D -> B, E -> C (csak példa)
-    if (r === "A" || r === "B") return "A";
-    if (r === "C" || r === "D") return "B";
-    return "C";
+  const priceFor = (m: MultiplierKey) => {
+    const mult = layout.multipliers[m] ?? 1;
+    return Math.round(basePrice * mult);
   };
 
-  const savePrices = () => {
-    logAction?.({
-      type: "SEAT_PRICES_SAVE" as any,
-      payload: { showId: selectedId, prices },
-    } as any);
+  const handleSeatClick = (r: number, c: number) => {
+    const id = seatId(r, c);
+    const current = layout.seatMap[id] ?? "M2";
+    const next = nextMultiplier(current);
 
-    alert("Árak mentése (dummy) – nézd a konzolt 🙂");
+    setLayout((prev) => ({
+      ...prev,
+      seatMap: { ...prev.seatMap, [id]: next },
+    }));
+  };
+
+  const handleMultiplierChange = (key: MultiplierKey, value: string) => {
+    const n = Number(value);
+    setLayout((prev) => ({
+      ...prev,
+      multipliers: {
+        ...prev.multipliers,
+        [key]: Number.isFinite(n) ? n : prev.multipliers[key],
+      },
+    }));
+  };
+
+  const handleSave = async () => {
+    await save();
+    window.alert("Kiosztás mentve.");
   };
 
   return (
@@ -58,20 +87,55 @@ export function SeatsPage() {
         <h2>Ülések</h2>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <span className="adminMuted" style={{ fontWeight: 900 }}>Előadás:</span>
-          <select className="adminSelect" value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
-            {shows.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.title} ({s.id})
+          <span className="adminMuted" style={{ fontWeight: 900 }}>
+            Koncert:
+          </span>
+
+          <select
+            className="adminSelect"
+            value={selectedId === "" ? "" : String(selectedId)}
+            onChange={(e) =>
+              setSelectedId(e.target.value ? Number(e.target.value) : "")
+            }
+            disabled={concertsLoading || concerts.length === 0}
+          >
+            {concerts.map((c) => (
+              <option key={c.id} value={String(c.id)}>
+                {c.name} ({c.place_name}, {c.place_city}) — {c.base_price} Ft
               </option>
             ))}
           </select>
+
+          {concertsError && (
+            <button className="adminBtn" type="button" onClick={reloadConcerts}>
+              Újra
+            </button>
+          )}
         </div>
       </div>
 
+      {concertsLoading && <p className="adminMuted">Koncertek betöltése...</p>}
+      {concertsError && (
+        <p className="adminMuted" style={{ color: "#ffb4b4", marginTop: 0 }}>
+          {concertsError}
+        </p>
+      )}
+
       {selected && (
         <p className="adminMuted" style={{ marginTop: 0 }}>
-          <b>Helyszín:</b> {selected.venue} &nbsp; • &nbsp; <b>Terem:</b> {selected.room}
+          <b>Előadó:</b> {selected.performer_name} &nbsp;•&nbsp;
+          <b>Műfaj:</b> {selected.genre_name} &nbsp;•&nbsp;
+          <b>Terem:</b> {rows}×{cols} &nbsp;•&nbsp;
+          <b>Alapár:</b> {basePrice} Ft
+        </p>
+      )}
+
+      {layoutLoading && selectedId !== "" && (
+        <p className="adminMuted">Kiosztás betöltése...</p>
+      )}
+      {layoutError && (
+        <p className="adminMuted" style={{ color: "#ffb4b4", marginTop: 0 }}>
+          {layoutError}
         </p>
       )}
 
@@ -79,57 +143,85 @@ export function SeatsPage() {
         <div className="adminStageWrap">
           <div className="adminStage">Színpad</div>
 
-          <div className="adminSeatGrid" aria-label="Seatmap 5x5">
-            {rows.map((r) =>
-              cols.map((c) => {
-                const cat = getCategory(r);
-                return (
-                  <div key={`${r}${c}`} className={`adminSeat adminSeat--${cat}`} title={`${r}${c} (cat ${cat})`}>
-                    {c}
-                  </div>
-                );
-              })
-            )}
+          <div
+            className="adminSeatLegend"
+            style={{ display: "flex", gap: 16, alignItems: "center" }}
+          >
+            {(["M1", "M2", "M3"] as MultiplierKey[]).map((k) => (
+              <span
+                key={k}
+                style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+              >
+                <i
+                  className={`adminSwatch ${MULTI_UI[k].seatClass.replace("adminSeat", "adminSwatch")}`}
+                />
+                <b> {MULTI_UI[k].label} árkategória:</b>
+                <input
+                  className="adminInput"
+                  style={{ width: 110, marginLeft: 6 }}
+                  value={priceFor(k)}
+                  onChange={(e) => {
+                    const price = Number(e.target.value);
+                    if (!Number.isFinite(price)) return;
+
+                    const mult = basePrice > 0 ? price / basePrice : 1;
+
+                    setLayout((prev) => ({
+                      ...prev,
+                      multipliers: { ...prev.multipliers, [k]: mult },
+                    }));
+                  }}
+                />
+                <span className="adminMuted">Ft</span>
+              </span>
+            ))}
           </div>
 
-          <div className="adminSeatLegend">
-            <span><i className="adminSwatch adminSwatch--A" /> A kategória</span>
-            <span><i className="adminSwatch adminSwatch--B" /> B kategória</span>
-            <span><i className="adminSwatch adminSwatch--C" /> C kategória</span>
+          <div
+            className="adminSeatGrid"
+            aria-label="Seatmap"
+            style={{ gridTemplateColumns: `repeat(${rows || 1}, 1fr)` }}
+          >
+            {Array.from({ length: cols }).map((_, rIdx) => {
+              const r = rIdx + 1;
+              return Array.from({ length: rows }).map((__, cIdx) => {
+                const c = cIdx + 1;
+                const id = seatId(r, c);
+                const m = layout.seatMap[id] ?? "M2";
+                const price = priceFor(m);
+
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`adminSeat ${MULTI_UI[m].seatClass}`}
+                    onClick={() => handleSeatClick(r, c)}
+                    title={`${id} • ${price} Ft (katt: vált)`}
+                    style={{ cursor: "pointer" }}
+                    
+                  >
+                    {r*c}
+                    
+                  </button>
+                );
+              });
+            })}
           </div>
         </div>
 
         <aside className="adminPriceBox">
-          <h3>Árak</h3>
+          <h3>Mentés</h3>
+          <p className="adminMuted" style={{ marginTop: 0 }}>
+            A kijelölt szék beállítása<br />
+          </p>
 
-          <div className="adminPriceRow">
-            <i className="adminSwatch adminSwatch--A" />
-            <input
-              className="adminInput"
-              value={prices.A}
-              onChange={(e) => setPrices((p) => ({ ...p, A: Number(e.target.value) || 0 }))}
-            />
-          </div>
-
-          <div className="adminPriceRow">
-            <i className="adminSwatch adminSwatch--B" />
-            <input
-              className="adminInput"
-              value={prices.B}
-              onChange={(e) => setPrices((p) => ({ ...p, B: Number(e.target.value) || 0 }))}
-            />
-          </div>
-
-          <div className="adminPriceRow">
-            <i className="adminSwatch adminSwatch--C" />
-            <input
-              className="adminInput"
-              value={prices.C}
-              onChange={(e) => setPrices((p) => ({ ...p, C: Number(e.target.value) || 0 }))}
-            />
-          </div>
-
-          <button className="adminBtn adminBtn--solid" type="button" onClick={savePrices} style={{ width: "100%", marginTop: 10 }}>
+          <button
+            className="adminBtn adminBtn--solid"
+            type="button"
+            onClick={handleSave}
+            disabled={selectedId === "" || rows === 0 || cols === 0}
+            style={{ width: "100%" }}
+          >
             Mentés
           </button>
         </aside>
