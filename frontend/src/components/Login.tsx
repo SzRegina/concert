@@ -1,13 +1,18 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRole } from "../utility/Auth";
 import { useAuth } from "../hooks/useAuth";
 
+
 export function Login() {
+  const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
   const auth = useAuth();
+
+  const title = useMemo(() => (mode === "login" ? "Bejelentkezés" : "Regisztráció"), [mode]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -16,17 +21,34 @@ export function Login() {
     setError("");
 
     const fd = new FormData(e.currentTarget);
-    const email = (fd.get("email") as string) ?? "";
-    const password = (fd.get("password") as string) ?? "";
-
-    if (!email || !password) {
-      setError("Minden mező kitöltése kötelező.");
-      setLoading(false);
-      return;
-    }
 
     try {
-      const user = await auth.login(email, password);
+      let user: any;
+
+      if (mode === "login") {
+        const email = (fd.get("email") as string) ?? "";
+        const password = (fd.get("password") as string) ?? "";
+
+        if (!email || !password) throw new Error("Minden mező kitöltése kötelező.");
+
+        user = await auth.login(email, password);
+      } else {
+        const name = (fd.get("name") as string) ?? "";
+        const email = (fd.get("email") as string) ?? "";
+        const password = (fd.get("password") as string) ?? "";
+        const password2 = (fd.get("password2") as string) ?? "";
+
+        if (!name || !email || !password || !password2) throw new Error("Minden mező kitöltése kötelező.");
+        if (password !== password2) throw new Error("A két jelszó nem egyezik.");
+
+        user = await auth.register({
+          name,
+          email,
+          password,
+          password_confirmation: password2,
+        });
+      }
+
       const role = getRole(user);
 
       if (role === 0) {
@@ -37,7 +59,7 @@ export function Login() {
         navigate("/", { replace: true });
       }
     } catch (err: any) {
-      setError(err?.message ?? "Nem sikerült belépni.");
+      setError(err?.message ?? (mode === "login" ? "Nem sikerült belépni." : "Nem sikerült regisztrálni."));
     } finally {
       setLoading(false);
     }
@@ -47,13 +69,50 @@ export function Login() {
     <section className="section">
       <div className="container">
         <div className="miniCard">
-          <h3>Bejelentkezés</h3>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <h3 style={{ margin: 0 }}>{title}</h3>
+
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                className="searchBtn"
+                onClick={() => {
+                  setError("");
+                  setMode("login");
+                }}
+                disabled={loading || mode === "login"}
+              >
+                Belépés
+              </button>
+              <button
+                type="button"
+                className="searchBtn"
+                onClick={() => {
+                  setError("");
+                  setMode("register");
+                }}
+                disabled={loading || mode === "register"}
+              >
+                Regisztráció
+              </button>
+            </div>
+          </div>
 
           <form
             onSubmit={handleSubmit}
             className="searchPanel"
-            style={{ gridTemplateColumns: "1fr 1fr auto" }}
+            style={{
+              gridTemplateColumns: mode === "login" ? "1fr 1fr auto" : "1fr 1fr 1fr auto",
+              marginTop: 12,
+            }}
           >
+            {mode === "register" && (
+              <div className="field">
+                <label className="label">Név</label>
+                <input className="input" name="name" type="text" required />
+              </div>
+            )}
+
             <div className="field">
               <label className="label">E-mail</label>
               <input className="input" name="email" type="email" required />
@@ -64,12 +123,23 @@ export function Login() {
               <input className="input" name="password" type="password" required />
             </div>
 
+            {mode === "register" && (
+              <div className="field">
+                <label className="label">Jelszó újra</label>
+                <input className="input" name="password2" type="password" required />
+              </div>
+            )}
+
             <button className="searchBtn" type="submit" disabled={loading}>
-              {loading ? "Belépés..." : "Belépés"}
+              {loading ? (mode === "login" ? "Belépés..." : "Regisztráció...") : mode === "login" ? "Belépés" : "Regisztráció"}
             </button>
           </form>
 
           {error && <p style={{ marginTop: 10, color: "red" }}>{error}</p>}
+
+          {mode === "register" && (
+            <p style={{ marginTop: 10, opacity: 0.8 }}></p>
+          )}
         </div>
       </div>
     </section>

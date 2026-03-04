@@ -13,18 +13,31 @@ export function ShowsPage() {
 
   const handleDelete = (id: string) => {
     if (!window.confirm("Biztosan törlöd?")) return;
-    setShows(prev => prev.filter(s => s.id !== id));
+    setShows((prev) => prev.filter((s) => s.id !== id));
     logAction({ type: "SHOW_DELETE", payload: { id } });
   };
 
   const handleStatusChange = (id: string, status: ShowStatus) => {
-    setShows(prev => prev.map(s => (s.id === id ? { ...s, status } : s)));
+    setShows((prev) => prev.map((s) => (s.id === id ? { ...s, status } : s)));
     logAction({ type: "SHOW_STATUS_UPDATE", payload: { id, status } });
   };
 
   return (
-    <div>
-      <h2>Előadások</h2>
+      <section className="adminCard">
+        <div className="adminCardHead">
+          <h2>Előadások</h2>
+          <div style={{ display: "flex", gap: 10 }}>
+          <button className="adminBtn adminBtn--solid" type="button">
+            + Új előadás felvétele
+          </button>
+            <button className="adminBtn adminBtn--solid" type="button">
+              Mentés
+            </button>
+            <button className="adminBtn" type="button">
+              Mégse
+            </button>
+          </div>
+        </div>
 
       {loading && <p>Betöltés...</p>}
       {error && (
@@ -33,8 +46,8 @@ export function ShowsPage() {
           <button onClick={reload}>Újratöltés</button>
         </div>
       )}
-
-      <table>
+        <div className="adminTableWrap">
+        <table className="adminTable">
         <thead>
           <tr>
             <th>Cím</th>
@@ -46,7 +59,7 @@ export function ShowsPage() {
           </tr>
         </thead>
         <tbody>
-          {shows.map(s => (
+          {shows.map((s) => (
             <tr key={s.id}>
               <td>{s.title}</td>
               <td>{s.performer_name}</td>
@@ -54,7 +67,7 @@ export function ShowsPage() {
               <td>
                 <select
                   value={s.status}
-                  onChange={e =>
+                  onChange={(e) =>
                     handleStatusChange(s.id, e.target.value as ShowStatus)
                   }
                 >
@@ -65,14 +78,13 @@ export function ShowsPage() {
               </td>
               <td>{s.basePrice} Ft</td>
               <td>
-                <button onClick={() => handleDelete(s.id)}>
-                  Törlés
-                </button>
+                <button onClick={() => handleDelete(s.id)}>Törlés</button>
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }

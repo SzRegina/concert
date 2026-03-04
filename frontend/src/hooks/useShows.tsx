@@ -39,18 +39,24 @@ export function useShows() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const raw = await res.json();
-      const list = Array.isArray(raw) ? raw : (raw.shows ?? raw.data ?? []);
+      const list = Array.isArray(raw) ? raw : raw.shows ?? raw.data ?? raw.concerts ?? [];
 
       setShows(
-        list.map((s: any) => ({
-          id: String(s.id ?? ""),
-          title: String(s.title ?? s.name ?? ""),
-          performer_name: String(s.performer_name ?? ""),
-          place_name: String(s.place_name ?? ""),
-          room: String(s.room ?? ""),
-          status: statusFromApi(s.status),
-          basePrice: Number(s.basePrice ?? s.base_price ?? s.price ?? 0),
-        }))
+        list.map((s: any) => {
+          const performer = s.performer ?? s.performer_data;
+          const place = s.place ?? s.venue;
+          const room = s.room;
+
+          return {
+            id: String(s.id ?? ""),
+            title: String(s.title ?? s.name ?? ""),
+            performer_name: String(s.performer_name ?? s.performerName ?? performer?.name ?? ""),
+            place_name: String(s.place_name ?? s.placeName ?? place?.name ?? ""),
+            room: String(s.room_name ?? s.roomName ?? room?.name ?? room?.id ?? s.room ?? ""),
+            status: statusFromApi(s.status),
+            basePrice: Number(s.basePrice ?? s.base_price ?? s.price ?? 0),
+          };
+        })
       );
     } catch (e) {
       console.error(e);
@@ -60,7 +66,9 @@ export function useShows() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return { shows, loading, error, reload: load };
 }

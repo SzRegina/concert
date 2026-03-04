@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useConcerts } from "../../hooks/useConcerts";
 import { MultiplierKey, useSeatLayout } from "../../hooks/useSeatLayout";
 
@@ -19,6 +19,10 @@ function seatId(r: number, c: number) {
   return `R${r}C${c}`;
 }
 
+function seatNumber(r: number, c: number, cols: number) {
+  return (r - 1) * cols + c;
+}
+
 export function SeatsPage() {
   const {
     concerts,
@@ -28,10 +32,7 @@ export function SeatsPage() {
   } = useConcerts();
 
   const [selectedId, setSelectedId] = useState<number | "">("");
-  const selected = useMemo(
-    () => concerts.find((c) => c.id === selectedId),
-    [concerts, selectedId],
-  );
+  const selected = concerts.find((c) => c.id === selectedId);
 
   useEffect(() => {
     if (selectedId === "" && concerts.length > 0) setSelectedId(concerts[0].id);
@@ -180,15 +181,16 @@ export function SeatsPage() {
           <div
             className="adminSeatGrid"
             aria-label="Seatmap"
-            style={{ gridTemplateColumns: `repeat(${rows || 1}, 1fr)` }}
+            style={{ gridTemplateColumns: `repeat(${cols || 1}, 1fr)` }}
           >
-            {Array.from({ length: cols }).map((_, rIdx) => {
+            {Array.from({ length: rows }).map((_, rIdx) => {
               const r = rIdx + 1;
-              return Array.from({ length: rows }).map((__, cIdx) => {
+              return Array.from({ length: cols }).map((__, cIdx) => {
                 const c = cIdx + 1;
                 const id = seatId(r, c);
                 const m = layout.seatMap[id] ?? "M2";
                 const price = priceFor(m);
+                const n = seatNumber(r, c, cols || 1);
 
                 return (
                   <button
@@ -196,11 +198,10 @@ export function SeatsPage() {
                     type="button"
                     className={`adminSeat ${MULTI_UI[m].seatClass}`}
                     onClick={() => handleSeatClick(r, c)}
-                    title={`${id} • ${price} Ft (katt: vált)`}
+                    title={`#${n} (${id}) • ${price} Ft (katt: vált)`}
                     style={{ cursor: "pointer" }}
-                    
                   >
-                    {r*c}
+                    {n}
                     
                   </button>
                 );
@@ -208,13 +209,11 @@ export function SeatsPage() {
             })}
           </div>
         </div>
-
         <aside className="adminPriceBox">
           <h3>Mentés</h3>
           <p className="adminMuted" style={{ marginTop: 0 }}>
             A kijelölt szék beállítása<br />
           </p>
-
           <button
             className="adminBtn adminBtn--solid"
             type="button"

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useConcerts } from "../../hooks/useConcerts";
 import { useSeatLayout, MultiplierKey } from "../../hooks/useSeatLayout";
@@ -6,6 +6,10 @@ import { useCart } from "../../cart/cartProvider";
 
 function seatId(r: number, c: number) {
   return `R${r}C${c}`;
+}
+
+function seatNumber(r: number, c: number, cols: number) {
+  return (r - 1) * cols + c;
 }
 
 const MULTI_UI: Record<MultiplierKey, { seatClass: string }> = {
@@ -21,7 +25,7 @@ export function ConcertDetailsPage() {
   const { layout, loading: layoutLoading, error: layoutError } = useSeatLayout(Number.isFinite(id) ? id : "");
   const { addItems } = useCart();
 
-  const concert = useMemo(() => concerts.find((c) => c.id === id), [concerts, id]);
+  const concert = concerts.find((c) => c.id === id);
 
   const [selected, setSelected] = useState<Record<string, boolean>>({});
 
@@ -127,6 +131,7 @@ export function ConcertDetailsPage() {
               return Array.from({ length: cols }).map((__, cIdx) => {
                 const c = cIdx + 1;
                 const sid = seatId(r, c);
+                const n = seatNumber(r, c, cols || 1);
 
                 const cat = seatCategory(sid);
                 const isSel = !!selected[sid];
@@ -137,14 +142,14 @@ export function ConcertDetailsPage() {
                     type="button"
                     className={`adminSeat ${MULTI_UI[cat].seatClass}`}
                     onClick={() => toggleSeat(sid)}
-                    title={`${sid} • ${seatPrice(sid)} Ft`}
+                    title={`#${n} (${sid}) • ${seatPrice(sid)} Ft`}
                     style={{
                       cursor: "pointer",
                       outline: isSel ? "3px solid white" : "none",
                       outlineOffset: 2,
                     }}
                   >
-                    {c}
+                    {n}
                   </button>
                 );
               });

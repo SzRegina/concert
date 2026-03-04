@@ -23,8 +23,10 @@ class ConcertController extends Controller
      */
     public function store(StoreConcertRequest $request)
     {
-        //
-    }
+        $concert = new Concert();
+        $concert->fill($request->all());
+        $concert->save();
+        return response()->json($concert, 201);    }
 
     /**
      * Display the specified resource.
@@ -42,7 +44,7 @@ class ConcertController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateConcertRequest $request, Concert $concert)
+    public function update(UpdateConcertRequest $request, $concert_id, $performer_id, $name, $room_id)
     {
         //
     }
@@ -55,6 +57,7 @@ class ConcertController extends Controller
         //
     }
 
+    //teljes lista mindenkinek
     public function concertAllDataList(Request $request)
     {
         $conc = $request->query('conc');          
@@ -67,7 +70,6 @@ class ConcertController extends Controller
         $query = DB::table('concerts')
             ->join('performers', 'performers.id', '=', 'concerts.performer_id')
             ->join('rooms', 'rooms.id', '=', 'concerts.room_id')
-            ->join('seats', 'seats.id', '=', 'concerts.room_id')
             ->join('places', 'places.id', '=', 'rooms.place_id')
             ->leftJoin('genres', 'genres.id', '=', 'performers.genre')
             ->select([
@@ -88,7 +90,6 @@ class ConcertController extends Controller
                 'places.city as place_city',
                 'genres.id as genre_id',
                 'genres.name as genre_name',
-                'seats.id as seats_id'
             ]);
 
         if ($performerId) $query->where('concerts.performer_id', $performerId);
@@ -108,5 +109,25 @@ class ConcertController extends Controller
         }
 
         return $query->orderBy('concerts.date')->get();
+        
     }
+
+    //admin
+    public function adminShow(Concert $concert)
+    {
+        return response()->json($concert, 200);
     }
+
+    public function adminUpdate(UpdateConcertRequest $request, Concert $concert)
+    {
+        $concert->fill($request->validated());
+        $concert->save();
+        return response()->json($concert, 200);
+    }
+
+    public function adminDestroy(Concert $concert)
+    {
+        $concert->delete();
+        return response()->noContent();
+    }
+}

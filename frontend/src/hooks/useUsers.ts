@@ -26,6 +26,11 @@ const roleToApi = (role: Role): number => {
   return 2;
 };
 
+function authHeaders(): HeadersInit {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export function useUsers() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,28 +41,25 @@ export function useUsers() {
       setLoading(true);
       setError("");
 
-      const res = await fetch(`${API}`, {
+      const res = await fetch(`${API}/all`, {
         method: "GET",
-        credentials: "include",
-        headers: { Accept: "application/json" },
+        headers: { 
+          Accept: "application/json", ...authHeaders() },
       });
-      
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-const data = await res.json();
-
-const list = Array.isArray(data) ? data : (data.users ?? data.data ?? []);
-setUsers(
-  list.map((u: any) => ({
-    id: u.id,
-    username: u.username ?? "",
-    email: u.email ?? "",
-    name: u.name ?? "",
-    role: roleFromApi(u.role),
-  }))
-); 
-setUsers(data);
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : (data.users ?? data.data ?? []);
+      setUsers(
+        list.map((u: any) => ({
+          id: Number(u.id),
+          username: u.username ?? "",
+          email: u.email ?? "",
+          name: u.name ?? "",
+          role: roleFromApi(u.role),
+        }))
+      );
     } catch (err) {
       console.error(err);
       setError("Nem sikerült betölteni a felhasználókat.");
@@ -65,65 +67,49 @@ setUsers(data);
       setLoading(false);
     }
   }, []);
-  
 
-  const addUser = useCallback(
-    async (user: Omit<UserRow, "id">) => {
-      const res = await fetch(API, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(user),
-      });
+  const addUser = useCallback(async (user: Omit<UserRow, "id">) => {
+    const res = await fetch(`${API}`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json", 
+        Accept: "application/json", ...authHeaders() },
+      body: JSON.stringify({
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        role: roleToApi(user.role),
+      }),
+    });
 
-      if (!res.ok) throw new Error("Hiba a felhasználó létrehozásakor.");
-
-      await load();
-    },
-    [load]
-  );
-
-  const updateRole = useCallback(
-    async (id: number, role: Role) => {
-      const res = await fetch(`${API}/${id}/role`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ role: roleToApi(role) }),
-      });
-
-      if (!res.ok) throw new Error("Hiba a szerepkör módosításakor.");
-
-      await load();
-    },
-    [load]
-  );
-
-  const removeUser = useCallback(
-    async (id: number) => {
-      const res = await fetch(`${API}/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!res.ok) throw new Error("Hiba a törléskor.");
-
-      await load();
-    },
-    [load]
-  );
-
-  useEffect(() => {
-    load();
+    if (!res.ok) throw new Error("Hiba a felhasználó létrehozásakor.");
+    await load();
   }, [load]);
 
-  return {
-    users,
-    loading,
-    error,
-    reload: load,
-    addUser,
-    updateRole,
-    removeUser,
-  };
+  const updateRole = useCallback(async (id: number, role: Role) => {
+    const res = await fetch(`${API}/${id}/role`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json", 
+        Accept: "application/json", ...authHeaders() },
+      body: JSON.stringify({ role: roleToApi(role) }),
+    });
+
+    if (!res.ok) throw new Error("Hiba a szerepkör módosításakor.");
+    await load();
+  }, [load]);
+
+  const removeUser = useCallback(async (id: number) => {
+    const res = await fetch(`${API}/${id}`, {
+      method: "DELETE",
+      headers: { Accept: "application/json", ...authHeaders() },
+    });
+
+    if (!res.ok) throw new Error("Hiba a törléskor.");
+    await load();
+  }, [load]);
+
+  useEffect(() => { load(); }, [load]);
+
+  return { users, loading, error, reload: load, addUser, updateRole, removeUser };
 }

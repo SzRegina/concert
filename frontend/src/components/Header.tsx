@@ -49,8 +49,8 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
 
                 <div style={{ display: "grid", gap: 8 }}>
                   <ul>
-                  <li className="btn" onClick={() => alert("Adataim")}>Adataim</li>
-                  <li className="btn" onClick={() => alert("Vásárlásaim")}>Vásárlásaim</li>
+                  <li className="btn" onClick={() => <Link to="/user/personal"></Link>}>Adataim</li>
+                  <li className="btn" onClick={() => <Link to="/user/orders"></Link>}>Vásárlásaim</li>
                   <li
                     className="btn"
                     onClick={() => {
