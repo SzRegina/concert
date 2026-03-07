@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { getRole } from "../utility/Auth";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header(props: { user: any | null; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
@@ -26,6 +27,7 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
             style={{ width: "30px", filter: "invert(100%)" }}
           />
         </Link>
+        <ThemeToggle />
         {!props.user ? (
           <Link to="/login" className="pill">
             Bejelentkezés
