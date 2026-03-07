@@ -51,6 +51,11 @@ class RoomController extends Controller
         return response()->json(['message' => 'Deleted']);
     }
 
+    public function adminIndex()
+    {
+        return Room::all();
+    }
+
     public function adminShow(Room $room)
     {
         return $room;

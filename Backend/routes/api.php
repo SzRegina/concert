@@ -90,5 +90,12 @@ Route::middleware('admin')->group(function () {
     Route::post('/rooms', [RoomController::class, 'adminStore']);
     Route::put('/rooms/{room}', [RoomController::class, 'adminUpdate']);
     Route::delete('/rooms/{room}', [RoomController::class, 'adminDestroy']);
+
+    // Seats
+    Route::get('/seats', [SeatController::class, 'adminIndex']);
+    Route::get('/seats/{seat}', [SeatController::class, 'adminShow']);
+    Route::post('/seats', [SeatController::class, 'adminStore']);
+    Route::put('/seats/{seat}', [SeatController::class, 'adminUpdate']);
+    Route::delete('/seats/{seat}', [SeatController::class, 'adminDestroy']);
 });
 });

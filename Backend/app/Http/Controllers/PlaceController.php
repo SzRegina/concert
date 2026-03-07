@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Place;
 use App\Http\Requests\StorePlaceRequest;
 use App\Http\Requests\UpdatePlaceRequest;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class PlaceController extends Controller
 {
@@ -47,17 +46,6 @@ class PlaceController extends Controller
         return $place;
     }
 
-    //admin update
-    public function adminUpdate(UpdatePlaceRequest $request, Place $place): JsonResponse
-    {
-        $place->update($request->validated());
-
-        return response()->json([
-            'message' => 'Place updated',
-            'place' => $place->fresh(),
-        ]);
-    }
-
     /**
      * Remove the specified resource from storage.
      */
@@ -67,8 +55,24 @@ class PlaceController extends Controller
         return response()->noContent();
     }
 
-    //admin törlés
-    public function adminDestroy(Place $place): JsonResponse
+
+    //admin
+    public function adminShow(string $id)
+    {
+        return Place::find($id);
+    }
+
+    public function adminUpdate(UpdatePlaceRequest $request, Place $place)
+    {
+        $place->update($request->validated());
+
+        return response()->json([
+            'message' => 'Place updated',
+            'place' => $place->fresh(),
+        ]);
+    }
+
+    public function adminDestroy(Place $place)
     {
         $place->delete();
 

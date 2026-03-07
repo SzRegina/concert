@@ -8,7 +8,6 @@ type OrderMini = {
 };
 
 export function REG_OrdersPage() {
-  // egyelőre üres
   const orders = useMemo<OrderMini[]>(() => [], []);
 
   return (
@@ -28,7 +27,6 @@ export function REG_OrdersPage() {
         <div className="userOrdersGrid">
           {orders.map((o) => (
             <div key={o.orderNumber} className="userOrderTile">
-              {/* ...kártya tartalom... */}
             </div>
           ))}
         </div>

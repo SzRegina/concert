@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { getRole } from "../utility/Auth";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header(props: { user: any | null; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
+  const role = getRole(props.user);
+  const profileBase = role === 0 ? "/admin" : role === 2 ? "/user" : "/";  
 
   return (
     <div className="container topbar__inner">
@@ -23,6 +27,7 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
             style={{ width: "30px", filter: "invert(100%)" }}
           />
         </Link>
+        <ThemeToggle />
         {!props.user ? (
           <Link to="/login" className="pill">
             Bejelentkezés
@@ -48,19 +53,33 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
                 </div>
 
                 <div style={{ display: "grid", gap: 8 }}>
-                  <ul>
-                  <li className="btn" onClick={() => <Link to="/user/personal"></Link>}>Adataim</li>
-                  <li className="btn" onClick={() => <Link to="/user/orders"></Link>}>Vásárlásaim</li>
-                  <li
+                  {role === 2 && (
+                    <>
+                      <Link className="btn" to={`${profileBase}/personal`} onClick={() => setOpen(false)}>
+                        Adataim
+                      </Link>
+                      <Link className="btn" to={`${profileBase}/orders`} onClick={() => setOpen(false)}>
+                        Vásárlásaim
+                      </Link>
+                    </>
+                  )}
+
+                  {role === 0 && (
+                    <Link className="btn" to="/admin" onClick={() => setOpen(false)}>
+                      Admin felület
+                    </Link>
+                  )}
+
+                  <button
                     className="btn"
+                    type="button"
                     onClick={() => {
                       setOpen(false);
                       props.onLogout();
                     }}
                   >
                     Kilépés
-                  </li>
-                  </ul>
+                  </button>
                 </div>
               </div>
             )}

@@ -13,7 +13,11 @@ class SeatController extends Controller
      */
     public function index()
     {
-        return Seat::all();
+        return Seat::query()
+            ->orderBy('room_id')
+            ->orderBy('row_number')
+            ->orderBy('column_number')
+            ->get();
     }
 
     /**
@@ -21,31 +25,27 @@ class SeatController extends Controller
      */
     public function store(StoreSeatRequest $request)
     {
-        //
+        $seat = Seat::create($request->validated());
+        return response()->json($seat, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($room_id, $row_number, $column_number)
+    public function show(string $id)
     {
-        $lending = Seat::where('room_id',"=", $room_id)
-        ->where('room_id', $room_id)
-        ->where('row_number', $row_number)
-        ->where('column_number', $column_number)
-        ->get();
-        return $lending[0];
+        return Seat::findOrFail($id);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSeatRequest $request, $seat_id, $row_number, $column_number, $price_multiplier)
+    public function update(UpdateSeatRequest $request, Seat $seat)
     {
-        $concert = $this->show($row_number, $column_number, $price_multiplier);
-        $concert->fill($request->all());
-        $concert->save();
-        return response()->json($concert, 200);
+        $seat->fill($request->validated());
+        $seat->save();
+
+        return response()->json($seat, 200);
     }
 
     /**
@@ -53,6 +53,41 @@ class SeatController extends Controller
      */
     public function destroy(Seat $seat)
     {
-        //
+        $seat->delete();
+
+        return response()->noContent();
+    }
+
+    //admin
+        public function adminIndex()
+    {
+        return $this->index();
+    }
+
+    public function adminShow(Seat $seat)
+    {
+        return $seat;
+    }
+
+    public function adminStore(StoreSeatRequest $request)
+    {
+        $seat = Seat::create($request->validated());
+
+        return response()->json($seat, 201);
+    }
+
+    public function adminUpdate(UpdateSeatRequest $request, Seat $seat)
+    {
+        $seat->fill($request->validated());
+        $seat->save();
+
+        return response()->json($seat, 200);
+    }
+
+    public function adminDestroy(Seat $seat)
+    {
+        $seat->delete();
+
+        return response()->noContent();
     }
 }

@@ -52,6 +52,12 @@ class PerformerController extends Controller
     }
 
     //admin
+
+    public function adminIndex()
+    {
+        return Performer::all();
+    }
+
     public function adminShow(Performer $performer)
     {
         return $performer;
