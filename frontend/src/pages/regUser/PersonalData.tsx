@@ -8,14 +8,11 @@ type PersonalDataProps = {
 
 export function PersonalData({ onUserUpdated }: PersonalDataProps) {
   const { user, refresh } = useAuth();
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
-
   const [saving, setSaving] = useState(false);
 
   const extractErrorMessage = async (res: Response): Promise<string> => {

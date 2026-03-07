@@ -29,7 +29,7 @@ class ReservationController extends Controller
      */
     public function show(Reservation $reservation)
     {
-        //
+        return $reservation;
     }
 
     /**
@@ -45,6 +45,16 @@ class ReservationController extends Controller
      */
     public function destroy(Reservation $reservation)
     {
-        //
+        $user = request()->user();
+
+        if (!$user->isAdmin() && (int) $reservation->user_id !== (int) $user->id) {
+            return response()->json([
+                'message' => 'Forbidden.',
+            ], 403);
+        }
+
+        $reservation->delete();
+
+        return response()->noContent();
     }
 }

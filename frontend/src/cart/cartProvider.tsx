@@ -5,7 +5,6 @@ export type CartItem = {
   concertName: string;
   date?: string;
   place?: string;
-
   seatId: string;    
   price: number;     
 };
@@ -71,6 +70,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 export function useCart() {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used inside CartProvider");
+  if (!ctx) throw new Error("");
   return ctx;
 }
