@@ -21,11 +21,7 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
 
       <div className="actions" style={{ position: "relative" }}>
         <Link to="/cart">
-          <img
-            src="cart.png"
-            alt=""
-            style={{ width: "30px", filter: "invert(100%)" }}
-          />
+          <img src="/cart.png" alt="Kosár" className="cartIcon" style={{ width: "30px" }} />
         </Link>
         <ThemeToggle />
         {!props.user ? (
