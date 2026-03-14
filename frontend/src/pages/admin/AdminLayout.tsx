@@ -90,6 +90,13 @@ export function AdminLayout() {
           </NavLink>
 
           <NavLink
+            to="/admin/add"
+            className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
+          >
+            Újak felvétele
+          </NavLink>          
+
+          <NavLink
             to="/admin/seats"
             className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
           >

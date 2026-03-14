@@ -113,14 +113,6 @@ export function useConcerts() {
       setLoading(false);
     }
 
-      const last = await fetch(`${API_BASE}/api/lastConcert`, {
-        method: "GET",
-        credentials: "include",
-        headers: { Accept: "application/json" },
-      });
-
-      console.log(last)
-
   }, []);
 
   useEffect(() => {

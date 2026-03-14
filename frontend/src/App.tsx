@@ -17,6 +17,7 @@ import { getRole } from "./utility/Auth";
 import { CartProvider } from "./cart/cartProvider";
 import { Cart } from "./pages/all/Cart";
 import { ConcertDetailsPage } from "./pages/all/ConcertDetailsPage";
+import { AddNewPage } from "./pages/admin/AddNewAll";
 
 function RequireRole(props: {
   user: any | null;
@@ -62,6 +63,8 @@ function AppRoutes() {
             <Route path="orders" element={<OrdersPage />} />
             <Route path="shows" element={<ShowsPage />} />
             <Route path="seats" element={<SeatsPage />} />
+            <Route path="add" element={<AddNewPage />} />
+            
           </Route>
 
           <Route
