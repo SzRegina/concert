@@ -14,7 +14,7 @@ function formatNotifyList(data: any) {
   return [
     "Az alábbi vásárlókat kell értesíteni:",
     ...list.map((row: any) => `- ${row.name || "Ismeretlen"} (${row.email || "nincs email"})`),
-  ].join("");
+  ].join("\n");
 }
 
 export function ShowsPage() {

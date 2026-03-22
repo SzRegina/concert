@@ -13,26 +13,28 @@ import { UserLayout } from "./pages/regUser/UserLayout";
 import { REG_OrdersPage } from "./pages/regUser/REG_OrdersPage";
 import { PersonalData } from "./pages/regUser/PersonalData";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
+import { User } from "./types";
 import { getRole } from "./utility/Auth";
 import { CartProvider } from "./cart/cartProvider";
 import { Cart } from "./pages/all/Cart";
 import { ConcertDetailsPage } from "./pages/all/ConcertDetailsPage";
 import { AddNewPage } from "./pages/admin/AddNewAll";
 
-function RequireRole(props: {
-  user: any | null;
+type RequireRoleProps = {
+  user: User | null;
   allowed: number[];
   authChecked: boolean;
   children: React.ReactElement;
-}) {
-  if (!props.authChecked) return <div style={{ padding: 20 }}>Betöltés...</div>;
-  if (!props.user) return <Navigate to="/login" replace />;
+};
 
-  const role = getRole(props.user);
-  if (role === null || !props.allowed.includes(role))
-    return <Navigate to="/" replace />;
+function RequireRole({ user, allowed, authChecked, children }: RequireRoleProps) {
+  if (!authChecked) return <div className="pageLoading">Betöltés...</div>;
+  if (!user) return <Navigate to="/login" replace />;
 
-  return props.children;
+  const role = getRole(user);
+  if (role === null || !allowed.includes(role)) return <Navigate to="/" replace />;
+
+  return children;
 }
 
 function AppRoutes() {
@@ -46,7 +48,6 @@ function AppRoutes() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
-
           <Route path="/concerts" element={<ConcertPage />} />
           <Route path="/login" element={<Login />} />
 
@@ -64,7 +65,6 @@ function AppRoutes() {
             <Route path="shows" element={<ShowsPage />} />
             <Route path="seats" element={<SeatsPage />} />
             <Route path="add" element={<AddNewPage />} />
-            
           </Route>
 
           <Route
@@ -76,12 +76,10 @@ function AppRoutes() {
             }
           >
             <Route index element={<Navigate to="personal" replace />} />
-            <Route
-              path="personal"
-              element={<PersonalData onUserUpdated={() => refresh()} />}
-            />
+            <Route path="personal" element={<PersonalData onUserUpdated={() => refresh()} />} />
             <Route path="orders" element={<REG_OrdersPage />} />
           </Route>
+
           <Route path="/cart" element={<Cart />} />
           <Route path="/concerts/:id" element={<ConcertDetailsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { User } from "../types";
 import { API_BASE } from "../utility/config";
 
 const API = `${API_BASE}/api`;
@@ -10,12 +11,16 @@ type RegisterPayload = {
   password_confirmation: string;
 };
 
+type AuthResponse = {
+  access_token?: string;
+};
+
 type AuthState = {
-  user: any | null;
+  user: User | null;
   authChecked: boolean;
-  refresh: () => Promise<any | null>;
-  login: (email: string, password: string) => Promise<any>;
-  register: (payload: RegisterPayload) => Promise<any>;
+  refresh: () => Promise<User | null>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (payload: RegisterPayload) => Promise<User>;
   logout: () => Promise<void>;
 };
 
@@ -24,26 +29,20 @@ const AuthCtx = createContext<AuthState | null>(null);
 async function extractErrorMessage(res: Response): Promise<string> {
   try {
     const data = await res.json();
-
     const firstField = data?.errors ? Object.keys(data.errors)[0] : null;
     const firstErr = firstField ? data.errors[firstField]?.[0] : null;
 
-    return (
-      firstErr ||
-      data?.message ||
-      data?.error ||
-      `HTTP ${res.status}`
-    );
+    return firstErr || data?.message || data?.error || `HTTP ${res.status}`;
   } catch {
     return `HTTP ${res.status}`;
   }
 }
 
 export function AuthProvider(props: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
 
-  const refresh = useCallback(async (): Promise<any | null> => {
+  const refresh = useCallback(async (): Promise<User | null> => {
     const token = localStorage.getItem("token");
     if (!token) {
       setUser(null);
@@ -60,7 +59,7 @@ export function AuthProvider(props: { children: React.ReactNode }) {
       if (!res.ok) {
         const message = await extractErrorMessage(res);
 
-        if (res.status === 401 || res.status === 403 || res.status === 419) {
+        if ([401, 403, 419].includes(res.status)) {
           localStorage.removeItem("token");
           setUser(null);
         }
@@ -68,11 +67,10 @@ export function AuthProvider(props: { children: React.ReactNode }) {
         throw new Error(message);
       }
 
-      const me = await res.json();
+      const me = (await res.json()) as User;
       setUser(me);
       return me;
-    } catch (e) {
-      console.error(e);
+    } catch {
       return null;
     } finally {
       setAuthChecked(true);
@@ -93,15 +91,15 @@ export function AuthProvider(props: { children: React.ReactNode }) {
 
       if (!res.ok) throw new Error(await extractErrorMessage(res));
 
-      const data = await res.json();
-      if (data?.access_token) localStorage.setItem("token", data.access_token);
+      const data = (await res.json()) as AuthResponse;
+      if (data.access_token) localStorage.setItem("token", data.access_token);
 
       const me = await refresh();
       if (!me) throw new Error("Nem sikerült betölteni a felhasználót belépés után.");
 
       return me;
     },
-    [refresh]
+    [refresh],
   );
 
   const register = useCallback(
@@ -114,15 +112,15 @@ export function AuthProvider(props: { children: React.ReactNode }) {
 
       if (!res.ok) throw new Error(await extractErrorMessage(res));
 
-      const data = await res.json();
-      if (data?.access_token) localStorage.setItem("token", data.access_token);
+      const data = (await res.json()) as AuthResponse;
+      if (data.access_token) localStorage.setItem("token", data.access_token);
 
       const me = await refresh();
       if (!me) throw new Error("Nem sikerült betölteni a felhasználót regisztráció után.");
 
       return me;
     },
-    [refresh]
+    [refresh],
   );
 
   const logout = useCallback(async () => {

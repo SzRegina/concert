@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, SearchFilters } from "../../components/Search";
 import { ConcertCard } from "../../components/ConcertCard";
 import { Footer } from "../../components/Footer";
 import { useConcerts } from "../../hooks/useConcerts";
 import { usePlaces } from "../../hooks/usePlaces";
 import { useGenres } from "../../hooks/useGenres";
+import { Concert } from "../../types";
 
 const WINDOW = 4;
 
@@ -20,47 +21,48 @@ export function Home() {
     genreId: "",
   });
   const [start, setStart] = useState(0);
-  const q = filters.q.trim().toLowerCase();
-  const date = filters.date.trim();
 
-  const filtered = concerts.filter((c: any) => {
-    const name = String(c?.name ?? "").toLowerCase();
-    const perf = String(c?.performer_name ?? "").toLowerCase();
+  const filtered = useMemo(() => {
+    const q = filters.q.trim().toLowerCase();
+    const date = filters.date.trim();
 
-    const placeOk =
-      !filters.placeId || String(c?.place_id ?? "") === filters.placeId;
+    return concerts.filter((concert) => {
+      const name = String(concert.name ?? "").toLowerCase();
+      const performer = String(concert.performer_name ?? "").toLowerCase();
+      const placeOk = !filters.placeId || String(concert.place_id ?? "") === filters.placeId;
+      const genreOk = !filters.genreId || String(concert.genre_id ?? "") === filters.genreId;
+      const qOk = !q || name.includes(q) || performer.includes(q);
+      const dateOk = !date || String(concert.date ?? "").startsWith(date);
 
-    const genreOk =
-      !filters.genreId || String(c?.genre_id ?? "") === filters.genreId;
+      return placeOk && genreOk && qOk && dateOk;
+    });
+  }, [concerts, filters]);
 
-    const qOk = !q || name.includes(q) || perf.includes(q);
-    const dateOk = !date || String(c?.date ?? "").startsWith(date);
+  useEffect(() => {
+    setStart(0);
+  }, [filters]);
 
-    return placeOk && genreOk && qOk && dateOk;
-  });
+  const latestConcert = useMemo(() => {
+    if (concerts.length === 0) return null;
 
-  const latestConcert =
-    filtered.length > 0
-      ? [...filtered].sort(
-          (a: any, b: any) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime(),
-        )[0]
-      : null;
+    return [...concerts].sort(
+      (a, b) => new Date(String(b.date ?? "")).getTime() - new Date(String(a.date ?? "")).getTime(),
+    )[0] ?? null;
+  }, [concerts]);
 
   const maxStart = Math.max(0, filtered.length - WINDOW);
   const canSlide = filtered.length > WINDOW;
+  const visibleConcerts = canSlide ? filtered.slice(start, start + WINDOW) : filtered;
 
   const prev = () => {
     if (!canSlide) return;
-    setStart((s) => (s <= 0 ? maxStart : s - 1));
+    setStart((value) => (value <= 0 ? maxStart : value - 1));
   };
 
   const next = () => {
     if (!canSlide) return;
-    setStart((s) => (s >= maxStart ? 0 : s + 1));
+    setStart((value) => (value >= maxStart ? 0 : value + 1));
   };
-
-  const visible = filtered.slice(start, start + WINDOW);
 
   if (loading) return <p>Betöltés…</p>;
   if (error) return <p>{error}</p>;
@@ -68,45 +70,45 @@ export function Home() {
   return (
     <>
       <div className="heroCard">
-        <Search
-          concerts={concerts}
-          places={places}
-          genres={genres}
-          onSearch={setFilters}
-        />
+        <Search concerts={concerts} places={places} genres={genres} onSearch={setFilters} />
       </div>
 
-      <div className="sliderLabel">Koncertek</div>
-      <div className="cardsSliderWrap">
-        <button
-          className="cardsArrow cardsArrow--left"
-          type="button"
-          onClick={prev}
-          disabled={!canSlide}
-          aria-label="Előző"
-        >
-          ‹
-        </button>
-        <div className="cardsSlider">
-          {filtered.map((c: any) => (
-            <ConcertCard key={c.id} concert={c} />
-          ))}
-        </div>
-        <button
-          className="cardsArrow cardsArrow--right"
-          type="button"
-          onClick={next}
-          disabled={!canSlide}
-          aria-label="Következő"
-        >
-          ›
-        </button>
-      </div>
+      {filtered.length > 0 ? (
+        <>
+          <div className="sliderLabel">Koncertek</div>
+          <div className="cardsSliderWrap">
+            <button
+              className="cardsArrow cardsArrow--left"
+              type="button"
+              onClick={prev}
+              disabled={!canSlide}
+              aria-label="Előző"
+            >
+              ‹
+            </button>
+            <div className="cardsSlider">
+              {visibleConcerts.map((concert: Concert) => (
+                <ConcertCard key={concert.id} concert={concert} />
+              ))}
+            </div>
+            <button
+              className="cardsArrow cardsArrow--right"
+              type="button"
+              onClick={next}
+              disabled={!canSlide}
+              aria-label="Következő"
+            >
+              ›
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="emptyState">Nincs találat a megadott szűrésre.</p>
+      )}
+
       <h3>Ezt is várjuk</h3>
       <div className="cards">
-        {latestConcert && (
-          <ConcertCard key={latestConcert.id} concert={latestConcert} />
-        )}
+        {latestConcert && <ConcertCard key={latestConcert.id} concert={latestConcert} />}
       </div>
 
       <Footer />

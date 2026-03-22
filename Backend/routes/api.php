@@ -42,8 +42,6 @@ Route::get('/tickets/{id}', [TicketController::class, 'show']);
 
 Route::get('/concerts/all', [ConcertController::class, 'concertAllDataList']);
 Route::get('/concerts/{concert}/seats', [ConcertController::class, 'seats']);
-Route::get('/place/all', [PlaceController::class, 'index']);
-Route::get('/genre/all', [GenreController::class, 'index']);
 
 //AUTH (protected)
 Route::middleware('auth:sanctum')->group(function () {
@@ -101,6 +99,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/admin/seats', [SeatController::class, 'adminStore']);
         Route::put('/admin/seats/{seat}', [SeatController::class, 'adminUpdate']);
         Route::delete('/admin/seats/{seat}', [SeatController::class, 'adminDestroy']);
+        Route::put('/seats/{seat}', [SeatController::class, 'adminUpdate']);
+        Route::delete('/seats/{seat}', [SeatController::class, 'adminDestroy']);
 
         // genres
         Route::get('/admin/genres', [GenreController::class, 'adminIndex']);

@@ -898,3 +898,83 @@ footer{
   gap: 16px;
   padding-bottom: 32px;
 }
+
+.footer{
+  margin-top: 32px;
+}
+
+.footerBrand{
+  margin-bottom: 10px;
+}
+
+.footerLabel{
+  color: var(--text-faint);
+  font-weight: 650;
+}
+
+.actions--menu{
+  position: relative;
+}
+
+.cartIcon--header{
+  width: 30px;
+}
+
+.profileMenu{
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+}
+
+.profileMenu__name{
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+
+.profileMenu__actions{
+  display: grid;
+  gap: 8px;
+}
+
+.cardLink{
+  text-decoration: none;
+  color: inherit;
+}
+
+.concertThumb{
+  background-size: cover;
+  background-position: center;
+  min-height: 180px;
+}
+
+.pageLoading{
+  padding: 20px;
+}
+
+.emptyState{
+  opacity: 0.8;
+  margin-top: 18px;
+}
+
+.stack-8{
+  display: grid;
+  gap: 8px;
+}
+
+.row-12{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.w-full{
+  width: 100%;
+}
+.select:has(option:disabled:checked) {
+  color: #999;
+}
+
+.select option:disabled {
+  color: #999;
+}

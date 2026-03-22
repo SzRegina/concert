@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { API_BASE } from "../utility/config";
 
-const API = `${API_BASE}/api/genre`;
+const API = `${API_BASE}/api/genres`;
 
 export type Genre = {
   id: number;
@@ -18,7 +18,7 @@ export function useGenres() {
       setLoading(true);
       setError("");
 
-      const res = await fetch(`${API}/all`, {
+      const res = await fetch(API, {
         method: "GET",
         credentials: "include",
         headers: { Accept: "application/json" },

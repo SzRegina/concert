@@ -21,11 +21,32 @@ export function Search(props: {
   const [placeId, setPlaceId] = useState("");
   const [genreId, setGenreId] = useState("");
 
+  const activeConcerts = (props.concerts ?? []).filter((concert) => {
+    const status = Number(concert.status ?? 0);
+    const softDeleted = Boolean(concert.soft_delete);
+    const concertTime = concert.date ? new Date(concert.date).getTime() : Number.POSITIVE_INFINITY;
+
+    return status === 0 && !softDeleted && concertTime >= Date.now();
+  });
+
+  const activePlaceIds = new Set(
+    activeConcerts
+      .map((concert) => concert.place_id)
+      .filter((id): id is number => Number.isFinite(Number(id))),
+  );
+
+  const activeGenreIds = new Set(
+    activeConcerts
+      .map((concert) => concert.genre_id)
+      .filter((id): id is number => Number.isFinite(Number(id))),
+  );
+
   const places = (props.places ?? [])
     .map((p) => ({
       id: String(p.id),
       name: String(p.name ?? ""),
       city: String(p.city ?? ""),
+      disabled: !activePlaceIds.has(Number(p.id)),
     }))
     .filter((p) => p.id && p.name)
     .sort((a, b) =>
@@ -33,7 +54,11 @@ export function Search(props: {
     );
 
   const genres = (props.genres ?? [])
-    .map((g) => ({ id: String(g.id), name: String(g.name ?? "") }))
+    .map((g) => ({
+      id: String(g.id),
+      name: String(g.name ?? ""),
+      disabled: !activeGenreIds.has(Number(g.id)),
+    }))
     .filter((g) => g.id && g.name)
     .sort((a, b) => a.name.localeCompare(b.name, "hu"));
 
@@ -93,8 +118,8 @@ export function Search(props: {
         >
           <option value="">Összes</option>
           {places.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} ({p.city})
+            <option key={p.id} value={p.id} disabled={p.disabled}>
+              {p.name} ({p.city}){p.disabled ? "" : ""} 
             </option>
           ))}
         </select>
@@ -109,8 +134,8 @@ export function Search(props: {
         >
           <option value="">Összes</option>
           {genres.map((g) => (
-            <option key={g.id} value={g.id}>
-              {g.name}
+            <option key={g.id} value={g.id} disabled={g.disabled}>
+              {g.name}{g.disabled ? "" : ""}
             </option>
           ))}
         </select>

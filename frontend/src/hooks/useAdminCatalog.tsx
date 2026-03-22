@@ -147,8 +147,17 @@ function useCrudList<T>(endpoint: string, mapFn: (item: any) => T) {
         },
       });
 
-      await ensureOk(res, `Nem sikerült törölni: ${endpoint}`);
+      const body = await parseJson(res);
+      if (!res.ok) {
+        const msg =
+          body?.message ||
+          body?.error ||
+          (typeof body === "string" ? body : "") ||
+          `Nem sikerült törölni: ${endpoint}`;
+        throw new Error(msg);
+      }
       await load();
+      return body;
     },
     [endpoint, load]
   );

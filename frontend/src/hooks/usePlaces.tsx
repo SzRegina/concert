@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { API_BASE } from "../utility/config";
 
-const API = `${API_BASE}/api/place`;
+const API = `${API_BASE}/api/places`;
 
 export type Place = {
   id: number;
@@ -19,7 +19,7 @@ export function usePlaces() {
       setLoading(true);
       setError("");
 
-      const res = await fetch(`${API}/all`, {
+      const res = await fetch(API, {
         method: "GET",
         credentials: "include",
         headers: { Accept: "application/json" },

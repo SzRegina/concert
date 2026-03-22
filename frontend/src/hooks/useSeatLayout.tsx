@@ -105,7 +105,7 @@ export function useSeatLayout(roomId: number | "") {
 
         const multiplier = layout.multipliers[multKey];
 
-        const res = await fetch(`${API_BASE}/api/seats/${id}`, {
+        const res = await fetch(`${API_BASE}/api/admin/seats/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

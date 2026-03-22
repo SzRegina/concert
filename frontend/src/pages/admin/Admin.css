@@ -122,10 +122,6 @@
 .adminMain{
   padding: 18px;
 }
-td{
- width: 20%;
- text-align: left;
-}
 .adminCard{
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -355,4 +351,16 @@ td{
   .adminBody{ grid-template-columns: 1fr; }
   .adminSide{ border-right: 0; border-bottom: 1px solid var(--line); }
   .adminGrid2{ grid-template-columns: 1fr; }
+}
+
+.adminToolbar{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.adminStack{
+  display: grid;
+  gap: 8px;
 }
