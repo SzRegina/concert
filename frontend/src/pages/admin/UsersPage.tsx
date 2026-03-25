@@ -62,25 +62,25 @@ export function UsersPage() {
   };
 
   return (
-    <section className="adminCard">
-      <div className="adminCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Felhasználók</h2>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <button className="adminBtn" type="button" onClick={reload} disabled={loading}>
+          <button className="actionBtn" type="button" onClick={reload} disabled={loading}>
             Frissítés
           </button>
 
           {!isAdding ? (
-            <button className="adminBtn adminBtn--solid" type="button" onClick={startAdd}>
+            <button className="actionBtn actionBtn--solid" type="button" onClick={startAdd}>
               + Új felhasználó felvétele
             </button>
           ) : (
             <>
-              <button className="adminBtn adminBtn--solid" type="button" onClick={saveAdd}>
+              <button className="actionBtn actionBtn--solid" type="button" onClick={saveAdd}>
                 Mentés
               </button>
-              <button className="adminBtn" type="button" onClick={cancelAdd}>
+              <button className="actionBtn" type="button" onClick={cancelAdd}>
                 Mégse
               </button>
             </>
@@ -113,9 +113,9 @@ export function UsersPage() {
             {!loading &&
               users.map((u) => (
                 <tr key={u.id}>
-                  <td>{u.email}</td>
-                  <td>{u.name}</td>
-                  <td>
+                  <td data-label="Email cím">{u.email}</td>
+                  <td data-label="Név">{u.name}</td>
+                  <td data-label="Státusz">
                     <select
                       className="adminSelect"
                       value={u.role}
@@ -126,7 +126,7 @@ export function UsersPage() {
                       <option value="Felhasználó">Felhasználó</option>
                     </select>
                   </td>
-                  <td>
+                  <td data-label="Művelet">
                     <button className="adminDanger" type="button" onClick={() => onRemove(u.id)}>
                       Profil törlése
                     </button>
@@ -137,7 +137,7 @@ export function UsersPage() {
             {isAdding && (
               <>
                 <tr>
-                  <td>
+                  <td data-label="Email cím">
                     <input
                       className="adminInput"
                       placeholder="email@pelda.hu"
@@ -145,7 +145,7 @@ export function UsersPage() {
                       onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))}
                     />
                   </td>
-                  <td>
+                  <td data-label="Név">
                     <input
                       className="adminInput"
                       placeholder="Teljes név"
@@ -153,7 +153,7 @@ export function UsersPage() {
                       onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
                     />
                   </td>
-                  <td>
+                  <td data-label="Státusz">
                     <select
                       className="adminSelect"
                       value={draft.role}
@@ -164,7 +164,7 @@ export function UsersPage() {
                       <option value="Felhasználó">Felhasználó</option>
                     </select>
                   </td>
-                  <td style={{ color: "rgba(243,241,255,.7)", fontWeight: 700 }}>Új felhasználó…</td>
+                  <td data-label="Művelet" style={{ color: "rgba(243,241,255,.7)", fontWeight: 700 }}>Új felhasználó…</td>
                 </tr>
                 <tr>
                   <td colSpan={5}>

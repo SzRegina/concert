@@ -83,8 +83,8 @@ export function SeatsPage() {
   };
 
   return (
-    <section className="adminCard">
-      <div className="adminCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Ülések</h2>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -108,7 +108,7 @@ export function SeatsPage() {
           </select>
 
           {concertsError && (
-            <button className="adminBtn" type="button" onClick={reloadConcerts}>
+            <button className="actionBtn" type="button" onClick={reloadConcerts}>
               Újra
             </button>
           )}
@@ -214,7 +214,7 @@ export function SeatsPage() {
             A kijelölt szék beállítása<br />
           </p>
           <button
-            className="adminBtn adminBtn--solid"
+            className="actionBtn actionBtn--solid"
             type="button"
             onClick={handleSave}
             disabled={selectedId === "" || rows === 0 || cols === 0}

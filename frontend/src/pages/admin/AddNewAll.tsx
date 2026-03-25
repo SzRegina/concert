@@ -99,17 +99,17 @@ export function AddNewPage() {
   };
 
   return (
-    <section className="adminCard">
-      <div className="adminCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Adatok felvétele/törlése</h2>
       </div>
 
-      <div className="adminToolbar">
-        <button className="adminBtn" onClick={() => setOpen(open === "places" ? null : "places")}>Új helyszín</button>
-        <button className="adminBtn" onClick={() => setOpen(open === "rooms" ? null : "rooms")}>Új terem</button>
-        <button className="adminBtn" onClick={() => setOpen(open === "performers" ? null : "performers")}>Új előadó</button>
-        <button className="adminBtn" onClick={() => setOpen(open === "genres" ? null : "genres")}>Új műfaj</button>
-        <button className="adminBtn adminBtn--solid" onClick={() => setOpen(open === "concerts" ? null : "concerts")}>Új koncert</button>
+      <div className="toolbar">
+        <button className="actionBtn" onClick={() => setOpen(open === "places" ? null : "places")}>Új helyszín</button>
+        <button className="actionBtn" onClick={() => setOpen(open === "rooms" ? null : "rooms")}>Új terem</button>
+        <button className="actionBtn" onClick={() => setOpen(open === "performers" ? null : "performers")}>Új előadó</button>
+        <button className="actionBtn" onClick={() => setOpen(open === "genres" ? null : "genres")}>Új műfaj</button>
+        <button className="actionBtn actionBtn--solid" onClick={() => setOpen(open === "concerts" ? null : "concerts")}>Új koncert</button>
       </div>
 
       {open === "places" && (
@@ -133,27 +133,27 @@ export function AddNewPage() {
               {!placesApi.loading &&
                 placesApi.items.map((place) => (
                   <tr key={place.id}>
-                    <td>{place.name}</td>
-                    <td>{place.city}</td>
-                    <td>{place.address}</td>
-                    <td>
+                    <td data-label="Név">{place.name}</td>
+                    <td data-label="Város">{place.city}</td>
+                    <td data-label="Cím">{place.address}</td>
+                    <td data-label="Művelet">
                       <button className="adminDanger" onClick={() => placesApi.deleteItem(place.id)}>Törlés</button>
                     </td>
                   </tr>
                 ))}
               <tr>
-                <td>
+                <td data-label="Név">
                   <input className="adminInput" placeholder="helyszín neve" value={placeDraft.name} onChange={(e) => updateDraft(setPlaceDraft, "name")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Város">
                   <input className="adminInput" placeholder="város" value={placeDraft.city} onChange={(e) => updateDraft(setPlaceDraft, "city")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Cím">
                   <input className="adminInput" placeholder="cím" value={placeDraft.address} onChange={(e) => updateDraft(setPlaceDraft, "address")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Művelet">
                   <button
-                    className="adminBtn adminBtn--solid"
+                    className="actionBtn actionBtn--solid"
                     onClick={async () => {
                       await placesApi.createItem(placeDraft);
                       setPlaceDraft(NEW_PLACE);
@@ -192,18 +192,18 @@ export function AddNewPage() {
                   const place = placesApi.items.find((item) => item.id === room.place_id);
                   return (
                     <tr key={room.id}>
-                      <td>{place?.name ?? `#${room.place_id}`}</td>
-                      <td>{room.name}</td>
-                      <td>{room.total_rows}</td>
-                      <td>{room.total_columns}</td>
-                      <td>
+                      <td data-label="Helyszín">{place?.name ?? `#${room.place_id}`}</td>
+                      <td data-label="Terem">{room.name}</td>
+                      <td data-label="Sorok">{room.total_rows}</td>
+                      <td data-label="Oszlopok">{room.total_columns}</td>
+                      <td data-label="Művelet">
                         <button className="adminDanger" onClick={() => roomsApi.deleteItem(room.id)}>Törlés</button>
                       </td>
                     </tr>
                   );
                 })}
               <tr>
-                <td>
+                <td data-label="Helyszín">
                   <select className="adminInput" value={roomDraft.place_id} onChange={(e) => updateDraft(setRoomDraft, "place_id")(e.target.value)}>
                     <option value="">helyszín választása</option>
                     {placesApi.items.map((place) => (
@@ -213,18 +213,18 @@ export function AddNewPage() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td data-label="Terem">
                   <input className="adminInput" type="number" placeholder="terem neve / sorszáma" value={roomDraft.name} onChange={(e) => updateDraft(setRoomDraft, "name")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Sorok">
                   <input className="adminInput" type="number" placeholder="sorok" value={roomDraft.total_rows} onChange={(e) => updateDraft(setRoomDraft, "total_rows")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Oszlopok">
                   <input className="adminInput" type="number" placeholder="oszlopok" value={roomDraft.total_columns} onChange={(e) => updateDraft(setRoomDraft, "total_columns")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Művelet">
                   <button
-                    className="adminBtn adminBtn--solid"
+                    className="actionBtn actionBtn--solid"
                     onClick={async () => {
                       await roomsApi.createItem({
                         place_id: Number(roomDraft.place_id),
@@ -259,19 +259,19 @@ export function AddNewPage() {
             <tbody>
               {performersApi.items.map((performer) => (
                 <tr key={performer.id}>
-                  <td>{performer.name}</td>
-                  <td>{genresApi.items.find((genre) => genre.id === performer.genre)?.name ?? "-"}</td>
-                  <td>{performer.country ?? "-"}</td>
-                  <td>
+                  <td data-label="Név">{performer.name}</td>
+                  <td data-label="Műfaj">{genresApi.items.find((genre) => genre.id === performer.genre)?.name ?? "-"}</td>
+                  <td data-label="Ország">{performer.country ?? "-"}</td>
+                  <td data-label="Művelet">
                     <button className="adminDanger" onClick={() => performersApi.deleteItem(performer.id)}>Törlés</button>
                   </td>
                 </tr>
               ))}
               <tr>
-                <td>
+                <td data-label="Név">
                   <input className="adminInput" placeholder="előadó neve" value={performerDraft.name} onChange={(e) => updateDraft(setPerformerDraft, "name")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Műfaj">
                   <select className="adminInput" value={performerDraft.genre} onChange={(e) => updateDraft(setPerformerDraft, "genre")(e.target.value)}>
                     <option value="">műfaj választása</option>
                     {genresApi.items.map((genre) => (
@@ -281,12 +281,12 @@ export function AddNewPage() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td data-label="Ország">
                   <input className="adminInput" placeholder="ország" value={performerDraft.country} onChange={(e) => updateDraft(setPerformerDraft, "country")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Művelet">
                   <button
-                    className="adminBtn adminBtn--solid"
+                    className="actionBtn actionBtn--solid"
                     onClick={async () => {
                       await performersApi.createItem({
                         name: performerDraft.name,
@@ -324,19 +324,19 @@ export function AddNewPage() {
             <tbody>
               {genresApi.items.map((genre) => (
                 <tr key={genre.id}>
-                  <td>{genre.name}</td>
-                  <td>
+                  <td data-label="Név">{genre.name}</td>
+                  <td data-label="Művelet">
                     <button className="adminDanger" onClick={() => genresApi.deleteItem(genre.id)}>Törlés</button>
                   </td>
                 </tr>
               ))}
               <tr>
-                <td>
+                <td data-label="Név">
                   <input className="adminInput" placeholder="műfaj neve" value={genreDraft.name} onChange={(e) => updateDraft(setGenreDraft, "name")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Művelet">
                   <button
-                    className="adminBtn adminBtn--solid"
+                    className="actionBtn actionBtn--solid"
                     onClick={async () => {
                       await genresApi.createItem(genreDraft);
                       setGenreDraft(NEW_GENRE);
@@ -370,24 +370,24 @@ export function AddNewPage() {
             <tbody>
               {concertsApi.items.map((concert) => (
                 <tr key={concert.id}>
-                  <td>{concert.name}</td>
-                  <td>{concert.performer_name ?? performersApi.items.find((performer) => performer.id === concert.performer_id)?.name ?? concert.performer_id}</td>
-                  <td>{concert.genre_name ?? genresApi.items.find((genre) => genre.id === concert.genre_id)?.name ?? "-"}</td>
-                  <td>{concert.place_name ?? placesApi.items.find((place) => place.id === concert.place_id)?.name ?? "-"}</td>
-                  <td>{concert.room_name ?? roomsApi.items.find((room) => room.id === concert.room_id)?.name ?? concert.room_id}</td>
-                  <td>{concert.date}</td>
-                  <td>{concert.base_price}</td>
-                  <td>
+                  <td data-label="Név">{concert.name}</td>
+                  <td data-label="Előadó">{concert.performer_name ?? performersApi.items.find((performer) => performer.id === concert.performer_id)?.name ?? concert.performer_id}</td>
+                  <td data-label="Műfaj">{concert.genre_name ?? genresApi.items.find((genre) => genre.id === concert.genre_id)?.name ?? "-"}</td>
+                  <td data-label="Helyszín">{concert.place_name ?? placesApi.items.find((place) => place.id === concert.place_id)?.name ?? "-"}</td>
+                  <td data-label="Terem">{concert.room_name ?? roomsApi.items.find((room) => room.id === concert.room_id)?.name ?? concert.room_id}</td>
+                  <td data-label="Dátum">{concert.date}</td>
+                  <td data-label="Alapár">{concert.base_price}</td>
+                  <td data-label="Művelet">
                     <button className="adminDanger" onClick={() => handleConcertDelete(concert.id)}>Törlés</button>
                   </td>
                 </tr>
               ))}
 
               <tr>
-                <td>
+                <td data-label="Név">
                   <input className="adminInput" placeholder="koncert neve" value={concertDraft.name} onChange={(e) => updateDraft(setConcertDraft, "name")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Előadó">
                   <select className="adminInput" value={concertDraft.performer_id} onChange={(e) => updateDraft(setConcertDraft, "performer_id")(e.target.value)}>
                     <option value="">előadó választása</option>
                     {performersApi.items.map((performer) => (
@@ -397,10 +397,10 @@ export function AddNewPage() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td data-label="Műfaj">
                   <span>{selectedGenreName}</span>
                 </td>
-                <td>
+                <td data-label="Helyszín">
                   <select
                     className="adminInput"
                     value={concertDraft.place_id}
@@ -417,7 +417,7 @@ export function AddNewPage() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td data-label="Terem">
                   <select className="adminInput" value={concertDraft.room_id} onChange={(e) => updateDraft(setConcertDraft, "room_id")(e.target.value)} disabled={!concertDraft.place_id}>
                     <option value="">terem választása</option>
                     {filteredRooms.map((room) => (
@@ -427,15 +427,15 @@ export function AddNewPage() {
                     ))}
                   </select>
                 </td>
-                <td>
+                <td data-label="Dátum">
                   <input className="adminInput" type="datetime-local" value={concertDraft.date} onChange={(e) => updateDraft(setConcertDraft, "date")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Alapár">
                   <input className="adminInput" type="number" placeholder="alapár" value={concertDraft.base_price} onChange={(e) => updateDraft(setConcertDraft, "base_price")(e.target.value)} />
                 </td>
-                <td>
+                <td data-label="Művelet">
                   <button
-                    className="adminBtn adminBtn--solid"
+                    className="actionBtn actionBtn--solid"
                     onClick={async () => {
                       if (!concertDraft.name.trim()) return alert("Add meg a koncert nevét!");
                       if (!concertDraft.performer_id) return alert("Válassz előadót!");
@@ -464,7 +464,7 @@ export function AddNewPage() {
 
               <tr>
                 <td colSpan={8}>
-                  <div className="adminStack">
+                  <div className="stack">
                     <input className="adminInput" placeholder="leírás" value={concertDraft.description} onChange={(e) => updateDraft(setConcertDraft, "description")(e.target.value)} />
                     <input className="adminInput" placeholder="kép URL" value={concertDraft.picture} onChange={(e) => updateDraft(setConcertDraft, "picture")(e.target.value)} />
                   </div>

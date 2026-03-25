@@ -131,14 +131,16 @@ export function Cart() {
   return (
     <section className="section">
       <div className="sectionHead">
-        <h2>Kosár</h2>
-        <Link className="btn" to="/concerts">Koncertek</Link>
+        <Link className="btn" to="/concerts">Vissza a koncertekhez</Link>
       </div>
 
       {items.length === 0 ? (
         <p>A kosár üres.</p>
       ) : (
         <>
+              <div className="sectionHead">
+        <h2>Kosár</h2>
+      </div>
           <ul className="c_list">
             {items.map((it) => {
               const discountPercent = getDiscountPercent(it.discountId);
@@ -198,9 +200,6 @@ export function Cart() {
             <div style={{ opacity: 0.9 }}>
               Végösszeg: <b>{money(total)}</b>
             </div>
-          </div>
-          <div style={{ marginTop: 8, opacity: 0.8 }}>
-            Kedvezmény típusa: {items.length > 0 ? getDiscountLabel(items[0].discountId) : "-"}
           </div>
         </>
       )}

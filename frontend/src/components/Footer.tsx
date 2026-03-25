@@ -13,9 +13,9 @@ export function Footer() {
         <div className="footGrid">
           <div>
             <div className="brand footerBrand">
-              <img src="/SEATY_logo.jpg" alt="SEATY logó" className="logoImg" />
+              <img src="/SEATY_newLogo_Black.png" alt="SEATY logó" className="logoImg logoImg--dark" />
+              <img src="/SEATY_newLogo_White.jpg" alt="SEATY logó" className="logoImg logoImg--light" />
             </div>
-            <div className="footerLabel">Hasznos linkek</div>
           </div>
 
           <div>
@@ -27,7 +27,6 @@ export function Footer() {
           <div>
             <h5>Fiók</h5>
             <Link to="/login">Bejelentkezés</Link>
-            <a href="#register">Regisztráció</a>
           </div>
 
           <div>

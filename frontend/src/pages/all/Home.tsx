@@ -106,8 +106,8 @@ export function Home() {
         <p className="emptyState">Nincs találat a megadott szűrésre.</p>
       )}
 
-      <h3>Ezt is várjuk</h3>
-      <div className="cards">
+      <h3 className="sliderLabel">Ezt is várjuk</h3>
+      <div className="card_home">
         {latestConcert && <ConcertCard key={latestConcert.id} concert={latestConcert} />}
       </div>
 

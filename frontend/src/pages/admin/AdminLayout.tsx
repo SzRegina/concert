@@ -1,7 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import "./Admin.css";
-import logo from "../../SEATY_logo.jpg";
+import "../../dashboard.css";
 
 export function AdminLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,95 +17,62 @@ export function AdminLayout() {
   }, []);
 
   return (
-    <div className="adminShell">
-      {/* Topbar */}
-      <header className="adminTop">
-        <div className="adminTop__left">
-          <div className="adminBrand">
-            <button
-              className="adminBtn adminBtn--solid"
-              type="button"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-            >
-              👑 Admin vezérlőpult
-            </button>
-
-          </div>
-        </div>
-
-        <div className="adminTop__right">
-          <Link className="adminBtn adminBtn--ghost" to="/home">
+    <div className="shell">
+      <header className="topbar">
+      <div className="sectionHead">
+        <h2>👑 Admin vezérlőpult</h2>
+      </div>
+        <div className="topbarActions">
+          <Link className="actionBtn actionBtn--ghost" to="/home">
             Vissza a főoldalra
           </Link>
-
-          <div className="adminMenu" ref={menuRef}>
-
-            {menuOpen && (
-              <div className="adminMenu__drop" role="menu">
-                <button
-                  className="adminMenu__item"
-                  type="button"
-                  onClick={() => {
-                    console.log("Katt: Kilépés (dummy)");
-                    setMenuOpen(false);
-                  }}
-                >
-                  Kilépés
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </header>
 
-      {/* Body */}
-      <div className="adminBody">
-        <aside className="adminSide">
+      <div className="dashboardBody dashboardBody--admin">
+        <aside className="dashboardSide">
           <NavLink
             to="/admin/users"
-            className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--admin" + (isActive ? " active" : "")}
           >
             Felhasználók
           </NavLink>
 
           <NavLink
             to="/admin/orders"
-            className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--admin" + (isActive ? " active" : "")}
           >
             Rendelések
           </NavLink>
 
           <NavLink
             to="/admin/shows"
-            className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--admin" + (isActive ? " active" : "")}
           >
             Előadások
           </NavLink>
 
           <NavLink
             to="/admin/add"
-            className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--admin" + (isActive ? " active" : "")}
           >
             Újak felvétele
           </NavLink>          
 
           <NavLink
             to="/admin/seats"
-            className={({ isActive }) => "adminNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--admin" + (isActive ? " active" : "")}
           >
             Ülések
           </NavLink>
 
-          <div className="adminNavItem adminNavItem--disabled">
+          <div className="dashboardNavItem dashboardNavItem--admin dashboardNavItem--disabled">
             Statisztikák és riportok (később)
           </div>
         </aside>
 
-        <main className="adminMain">
+        <main className="dashboardMain">
         <div>
-          {/* admin header/sidebar */}
           <Outlet />
         </div>
         </main>

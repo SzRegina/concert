@@ -119,10 +119,10 @@ export function OrdersPage() {
   };
 
   return (
-    <section className="adminCard">
-      <div className="adminCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Rendelések</h2>
-        <button className="adminBtn adminBtn--solid" type="button" onClick={load}>
+        <button className="actionBtn actionBtn--solid" type="button" onClick={load}>
           Frissítés
         </button>
       </div>
@@ -154,14 +154,14 @@ export function OrdersPage() {
               ) : (
                 orders.map((order) => (
                   <tr key={order.id}>
-                    <td>#{order.id}</td>
-                    <td>
+                    <td data-label="ID">#{order.id}</td>
+                    <td data-label="Felhasználó">
                       <div>{order.user?.name || "-"}</div>
                       <div className="adminMuted">{order.user?.email || ""}</div>
                     </td>
-                    <td>{order.concert?.name || "-"}</td>
-                    <td>{order.concert?.date || order.reservation_date || "-"}</td>
-                    <td>
+                    <td data-label="Koncert">{order.concert?.name || "-"}</td>
+                    <td data-label="Dátum">{order.concert?.date || order.reservation_date || "-"}</td>
+                    <td data-label="Jegyek">
                       {(order.tickets || []).map((ticket) => {
                         const row = ticket.seat?.row_number;
                         const column = ticket.seat?.column_number;
@@ -177,9 +177,9 @@ export function OrdersPage() {
                         );
                       })}
                     </td>
-                    <td>{money(order.total_price)}</td>
-                    <td>{order.status === 0 ? "aktív" : String(order.status ?? "-")}</td>
-                    <td>
+                    <td data-label="Összeg">{money(order.total_price)}</td>
+                    <td data-label="Státusz">{order.status === 0 ? "aktív" : String(order.status ?? "-")}</td>
+                    <td data-label="Művelet">
                       <button onClick={() => deleteReservation(order.id)} disabled={busy === `reservation-${order.id}`}>
                         Foglalás törlése
                       </button>

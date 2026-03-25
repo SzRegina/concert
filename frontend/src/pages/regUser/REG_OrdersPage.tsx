@@ -122,8 +122,8 @@ export function REG_OrdersPage() {
   };
 
   return (
-    <section className="userCard">
-      <div className="userCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Foglalásai / vásárlásai</h2>
         <button className="btn" type="button" onClick={load}>
           Frissítés
@@ -145,11 +145,7 @@ export function REG_OrdersPage() {
         <div className="userOrdersGrid">
           {orders.map((order) => (
             <div key={order.id} className="userOrderTile">
-              {order.concert?.picture ? (
-                <img className="userOrderPoster" src={order.concert.picture} alt={order.concert?.name || "Koncert"} />
-              ) : (
-                <div className="userOrderPoster" />
-              )}
+
               <div className="userOrderMeta">
                 <div className="userOrderTitle">{order.concert?.name || `Foglalás #${order.id}`}</div>
                 <div className="userOrderDate">{order.concert?.date || order.reservation_date || "-"}</div>

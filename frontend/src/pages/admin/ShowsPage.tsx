@@ -78,11 +78,11 @@ export function ShowsPage() {
   };
 
   return (
-    <section className="adminCard">
-      <div className="adminCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Előadások</h2>
         <div style={{ display: "flex", gap: 10 }}>
-          <button className="adminBtn adminBtn--solid" type="button" onClick={reload}>
+          <button className="actionBtn actionBtn--solid" type="button" onClick={reload}>
             Frissítés
           </button>
         </div>
@@ -111,10 +111,10 @@ export function ShowsPage() {
           <tbody>
             {shows.map((s) => (
               <tr key={s.id}>
-                <td>{s.title}</td>
-                <td>{s.performer_name}</td>
-                <td>{s.place_name}</td>
-                <td>
+                <td data-label="Cím">{s.title}</td>
+                <td data-label="Előadók">{s.performer_name}</td>
+                <td data-label="Helyszín">{s.place_name}</td>
+                <td data-label="Státusz">
                   <select
                     value={s.status}
                     disabled={busyId === s.id}
@@ -125,9 +125,9 @@ export function ShowsPage() {
                     <option value="Sold out">Sold out</option>
                   </select>
                 </td>
-                <td>{s.basePrice} Ft</td>
-                <td>{s.soft_delete ? "igen" : "nem"}</td>
-                <td>
+                <td data-label="Ár">{s.basePrice} Ft</td>
+                <td data-label="Törölve">{s.soft_delete ? "igen" : "nem"}</td>
+                <td data-label="Művelet">
                   <button onClick={() => handleDelete(s.id)} disabled={busyId === s.id}>Törlés</button>
                 </td>
               </tr>

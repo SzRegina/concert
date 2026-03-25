@@ -6,22 +6,22 @@ export function ConcertPage() {
 
   return (
     <section className="section">
-      <div className="">
-        <div className="sectionHead">
+      <div className="sectionHead">
           <h2>Összes koncert</h2>
           <button className="btn" onClick={reload}>
             Frissítés
           </button>
-        </div>
-
         {loading && <p>Betöltés…</p>}
         {error && <p>{error}</p>}
-
+      </div>
         {!loading && !error && (
           <ul className="c_list">
             {concerts.map((c: any) => (
               <li className="c_element" key={c.id}>
-                <div className="c_element_thumb">
+                <div
+                  className="c_element_thumb"
+                  style={{ backgroundImage: c.picture ? `url(${c.picture})` : undefined }}
+                >
                   <Link className="btn" to={`/concerts/${c.id}`}>Tovább</Link>
                 </div>
                 <div className="c_element_data">
@@ -37,7 +37,6 @@ export function ConcertPage() {
             ))}
           </ul>
         )}
-      </div>
     </section>
   );
 }
