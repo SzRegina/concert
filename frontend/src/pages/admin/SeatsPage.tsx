@@ -44,7 +44,7 @@ export function SeatsPage() {
     loading: layoutLoading,
     error: layoutError,
     save,
-  } = useSeatLayout(selectedId);
+  } = useSeatLayout(selected?.room_id ? Number(selected.room_id) : "")
 
   const rows = selected?.room_total_rows ?? 0;
   const cols = selected?.room_total_columns ?? 0;
@@ -83,8 +83,8 @@ export function SeatsPage() {
   };
 
   return (
-    <section className="adminCard">
-      <div className="adminCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Ülések</h2>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -108,7 +108,7 @@ export function SeatsPage() {
           </select>
 
           {concertsError && (
-            <button className="adminBtn" type="button" onClick={reloadConcerts}>
+            <button className="actionBtn" type="button" onClick={reloadConcerts}>
               Újra
             </button>
           )}
@@ -126,7 +126,7 @@ export function SeatsPage() {
         <p className="adminMuted" style={{ marginTop: 0 }}>
           <b>Előadó:</b> {selected.performer_name} &nbsp;•&nbsp;
           <b>Műfaj:</b> {selected.genre_name} &nbsp;•&nbsp;
-          <b>Terem:</b> {rows}×{cols} &nbsp;•&nbsp;
+          <b>Terem:</b> {cols}×{rows} &nbsp;•&nbsp;
           <b>Alapár:</b> {basePrice} Ft
         </p>
       )}
@@ -144,8 +144,7 @@ export function SeatsPage() {
         <div className="adminStageWrap">
           <div className="adminStage">Színpad</div>
 
-          <div
-            className="adminSeatLegend"
+          <div className="adminSeatLegend"
             style={{ display: "flex", gap: 16, alignItems: "center" }}
           >
             {(["M1", "M2", "M3"] as MultiplierKey[]).map((k) => (
@@ -215,7 +214,7 @@ export function SeatsPage() {
             A kijelölt szék beállítása<br />
           </p>
           <button
-            className="adminBtn adminBtn--solid"
+            className="actionBtn actionBtn--solid"
             type="button"
             onClick={handleSave}
             disabled={selectedId === "" || rows === 0 || cols === 0}

@@ -1,17 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { User } from "../types";
 import { getRole } from "../utility/Auth";
 import { ThemeToggle } from "./ThemeToggle";
 
-export function Header(props: { user: any | null; onLogout: () => void }) {
+type HeaderProps = {
+  user: User | null;
+  onLogout: () => void;
+};
+
+export function Header({ user, onLogout }: HeaderProps) {
   const [open, setOpen] = useState(false);
-  const role = getRole(props.user);
-  const profileBase = role === 0 ? "/admin" : role === 2 ? "/user" : "/";  
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const role = getRole(user);
+  const profileBase = role === 0 ? "/admin" : role === 2 ? "/user" : "/";
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="container topbar__inner">
       <Link to="/" className="brand" aria-label="SEATY főoldal">
-        <img src="/SEATY_logo.jpg" alt="SEATY logó" className="logoImg" />
+        <img src="/SEATY_newLogo_Black.png" alt="SEATY logó" className="logoImg logoImg--dark" />
+        <img src="/SEATY_newLogo_White.jpg" alt="SEATY logó" className="logoImg logoImg--light" />
       </Link>
 
       <nav className="nav" aria-label="Fő navigáció">
@@ -19,36 +38,26 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
         <Link to="/">Újdonság</Link>
       </nav>
 
-      <div className="actions" style={{ position: "relative" }}>
-        <Link to="/cart">
-          <img src="/cart.png" alt="Kosár" className="cartIcon" style={{ width: "30px" }} />
+      <div className="actions actions--menu" ref={menuRef}>
+        <Link to="/cart" aria-label="Kosár megnyitása">
+          <img src="/cart.png" alt="Kosár" className="cartIcon cartIcon--header" />
         </Link>
         <ThemeToggle />
-        {!props.user ? (
+        {!user ? (
           <Link to="/login" className="pill">
             Bejelentkezés
           </Link>
         ) : (
           <>
-            <button className="pill" type="button" onClick={() => setOpen((o) => !o)}>
+            <button className="pill" type="button" onClick={() => setOpen((prev) => !prev)}>
               Profil
             </button>
 
             {open && (
-              <div
-                className="miniCard"
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: "calc(100% + 8px)",
-                  minWidth: 220,
-                }}
-              >
-                <div style={{ marginBottom: 10, opacity: 0.85 }}>
-                  {props.user.name ?? "Bejelentkezve"}
-                </div>
+              <div className="miniCard profileMenu">
+                <div className="profileMenu__name">{user.name ?? "Bejelentkezve"}</div>
 
-                <div style={{ display: "grid", gap: 8 }}>
+                <div className="profileMenu__actions">
                   {role === 2 && (
                     <>
                       <Link className="btn" to={`${profileBase}/personal`} onClick={() => setOpen(false)}>
@@ -71,7 +80,7 @@ export function Header(props: { user: any | null; onLogout: () => void }) {
                     type="button"
                     onClick={() => {
                       setOpen(false);
-                      props.onLogout();
+                      onLogout();
                     }}
                   >
                     Kilépés

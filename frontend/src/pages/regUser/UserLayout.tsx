@@ -1,7 +1,6 @@
 import { Link, NavLink, Outlet, Navigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import "./Users.css";
-import logo from "../../SEATY_logo.jpg";
+import "../../dashboard.css";
 
 type UserLayoutProps = {
   user: any | null;
@@ -15,74 +14,37 @@ export function UserLayout({ user, onLogout }: UserLayoutProps) {
   const userName = user?.name ?? user?.username ?? user?.email ?? "Felhasználó";
 
   return (
-    <div className="userShell">
-      <header className="userTop">
-        <div className="userTop__left">
-          <div className="userBrand">
-            <img src={logo} alt="SEATY logó" className="userLogo" />
-            <div className="userBrandText">
-              <div className="userBrandTitle">SEATY</div>
-              <div className="userBrandSub">Fiók</div>
+    <div className="shell">
+      <header className="topbar">
+      <div className="sectionHead">
+            <h2>👤 {userName} </h2>
             </div>
-          </div>
-        </div>
-
-        <div className="userTop__right">
-          <Link className="userBtn userBtn--ghost" to="/home">
+        <div className="topbarActions">
+          <Link className="actionBtn actionBtn--ghost" to="/home">
             Vissza a főoldalra
           </Link>
-
-          <div className="userMenu" ref={menuRef}>
-            <button
-              className="userBtn userBtn--solid"
-              type="button"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-            >
-              👤 {userName} ▾
-            </button>
-
-            {menuOpen && (
-              <div className="userMenu__drop" role="menu">
-                <button
-                  className="userMenu__item"
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onLogout();
-                  }}
-                >
-                  Kilépés
-                </button>
-              </div>
-            )}
-          </div>
         </div>
-      </header>
-
-      <div className="userBody">
-        <aside className="userSide">
+              </header>
+      <div className="dashboardBody dashboardBody--user">
+        <aside className="dashboardSide">
           <NavLink
             to="personal"
-            className={({ isActive }) => "userNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--user" + (isActive ? " active" : "")}
           >
             Személyes adatai
           </NavLink>
 
           <NavLink
             to="orders"
-            className={({ isActive }) => "userNavItem" + (isActive ? " active" : "")}
+            className={({ isActive }) => "dashboardNavItem dashboardNavItem--user" + (isActive ? " active" : "")}
           >
             Foglalásai / vásárlásai
           </NavLink>
 
-          <div className="userNavItem userNavItem--disabled">
-            Fiókbeállítások (később)
-          </div>
+
         </aside>
 
-        <main className="userMain">
+        <main className="dashboardMain dashboardMain--user">
           <Outlet />
         </main>
       </div>

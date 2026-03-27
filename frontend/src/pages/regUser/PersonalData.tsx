@@ -96,8 +96,8 @@ export function PersonalData({ onUserUpdated }: PersonalDataProps) {
   };
 
   return (
-    <section className="userCard">
-      <div className="userCardHead">
+    <section className="panel">
+      <div className="panelHead">
         <h2>Személyes adatai</h2>
       </div>
 
@@ -149,7 +149,7 @@ export function PersonalData({ onUserUpdated }: PersonalDataProps) {
         </div>
 
         <div className="userFormActions">
-          <button className="userBtn userBtn--solid" type="button" onClick={save} disabled={saving}>
+          <button className="actionBtn actionBtn--solid" type="button" onClick={save} disabled={saving}>
             {saving ? "Mentés..." : "Frissítés"}
           </button>
         </div>
