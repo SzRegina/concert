@@ -21,7 +21,7 @@ export function Favorites() {
           className="thumb concertThumb"
           style={{
             backgroundImage: featured.picture
-              ? `url(${featured.picture})`
+              ? `url(http://127.0.0.1:8000${featured.picture})`
               : "none",
           }}
         />

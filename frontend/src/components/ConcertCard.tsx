@@ -12,7 +12,7 @@ export function ConcertCard({ concert }: ConcertCardProps) {
       <article className="card" role="button">
         <div
           className="thumb concertThumb"
-          style={{ backgroundImage: concert.picture ? `url(${concert.picture})` : "none" }}
+          style={{ backgroundImage: concert.picture ? `url(http://127.0.0.1:8000${concert.picture})` : "none" }}
         />
         <div className="cardBody">
           <h3 className="cardTitle">{concert.name}</h3>

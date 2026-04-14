@@ -21,7 +21,7 @@ export function ConcertPage() {
               <li className="c_element" key={c.id}>
                 <div
                   className="c_element_thumb"
-                  style={{ backgroundImage: c.picture ? `url(${c.picture})` : undefined }}
+                  style={{ backgroundImage: c.picture ? `url(http://127.0.0.1:8000${c.picture})` : undefined }}
                 >
                   <Link className="btn" to={`/concerts/${c.id}`}>Tovább</Link>
                 </div>
