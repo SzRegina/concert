@@ -1,84 +1,33 @@
+/* =========================================================
+   APP.CSS
+   Base + Dark theme + Components + Responsive
+   (Light theme külön fájl: App-light.css)
+   ========================================================= */
+
+/* =========================
+   0) CSS VARIABLES (DARK / BASE)
+   ========================= */
 :root{
   --bg:#0b0a10;
   --text:#f3f1ff;
   --line:rgba(255,255,255,0.08);
+
   --green:#94e56c;
   --green2:#29612f;
+
   --shadow:0 18px 55px rgba(0,0,0,0.55);
   --radius:18px;
+
   --text-soft: rgba(243,241,255,.78);
   --text-faint: rgba(243,241,255,.65);
+
   --surface: rgba(255,255,255,.03);
   --surface-strong: rgba(9,16,10,.45);
 }
 
-:root[data-theme="light"]{
-  --bg:#f7f8fb;
-  --text:#101828;
-  --line:rgba(16,24,40,0.10);
-  --green:#1aa3a3;
-  --green2:#0b6b6b;
-  --shadow:0 18px 55px rgba(16,24,40,0.10);
-  --text-soft: rgba(16,24,40,.78);
-  --text-faint: rgba(16,24,40,.62);
-  --surface: rgba(16,24,40,.03);
-  --surface-strong: rgba(255,255,255,.70);
-}
-
-:root[data-theme="light"] body{
-  background: var(--surface-strong);
-  color: var(--text);
-}
-
-:root[data-theme="light"] .heroCard{
-  background-image: url(../public/hero_pict.png);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: bottom;
-}
-
-:root[data-theme="light"] .topbar{
-  background: var(--surface-strong);
-  border-bottom: 1px solid var(--line);
-}
-
-:root[data-theme="light"] .nav{ color: rgba(16,24,40,.75); }
-:root[data-theme="light"] .nav a:hover{ color: rgba(16,24,40,1); }
-
-:root[data-theme="light"] .pill{
-  background: rgba(16,24,40,0.03);
-  color: rgba(16,24,40,.92);
-}
-
-.cartIcon{ filter: invert(100%); }
-:root[data-theme="light"] .cartIcon{ filter: none; }
-
-:root[data-theme="light"] .input,
-:root[data-theme="light"] .select{
-  background: rgba(255,255,255,.70);
-  color: var(--text);
-  border-color: var(--line);
-}
-
-:root[data-theme="light"] .select option{
-  background: var(--surface-strong);
-  color: #101828;
-}
-
-:root[data-theme="light"] .adminSeat.isSelected{
-  outline-color: rgba(16,24,40,.75);
-}
-
-:root[data-theme="light"] footer{
-  background: var(--surface-strong);
-  border-top: 1px solid var(--line);
-}
-
-:root[data-theme="light"] .footGrid{ color: rgba(16,24,40,.78); }
-:root[data-theme="light"] .footGrid h5{ color: rgba(16,24,40,.92); }
-:root[data-theme="light"] .footGrid a{ color: rgba(16,24,40,.78); }
-:root[data-theme="light"] .footGrid a:hover{ color: rgba(16,24,40,1); }
-
+/* =========================
+   1) RESET / BASE
+   ========================= */
 *{ box-sizing:border-box; }
 
 html, body{
@@ -95,12 +44,18 @@ body{
 a{ color: inherit; text-decoration:none; }
 img{ max-width:100%; display:block; }
 
+/* =========================
+   2) LAYOUT HELPERS
+   ========================= */
 .container{
   padding-top: 30px;
   width: min(1120px, 92vw);
   margin: 0 auto;
 }
 
+/* =========================
+   3) TOPBAR / NAV
+   ========================= */
 .topbar{
   position: sticky;
   top: 0;
@@ -118,6 +73,7 @@ img{ max-width:100%; display:block; }
   gap: 14px;
 }
 
+/* Nav (desktop) */
 .nav{
   display:flex;
   gap: 18px;
@@ -129,6 +85,7 @@ img{ max-width:100%; display:block; }
 .nav a{ opacity:.85; }
 .nav a:hover{ opacity:1; color:#fff; }
 
+/* Actions row */
 .actions{
   display:flex;
   gap: 10px;
@@ -139,6 +96,9 @@ img{ max-width:100%; display:block; }
   position: relative;
 }
 
+/* =========================
+   4) BUTTONS / PILLS
+   ========================= */
 .pill{
   border: 1px solid var(--line);
   background: rgba(255,255,255,0.03);
@@ -149,7 +109,7 @@ img{ max-width:100%; display:block; }
   color: rgba(243,241,255,0.9);
 }
 
-.btn {
+.btn{
   border:0;
   background: linear-gradient(135deg, var(--green), var(--green2));
   border-radius: 999px;
@@ -161,21 +121,20 @@ img{ max-width:100%; display:block; }
   cursor:pointer;
 }
 
-.profileMenu__actions a {
-  color: white;
-  font-weight: 400;
-  text-align: center;
-}
-
 .btn:hover{ filter: brightness(1.07); }
-.profileMenu__actions a{ filter: brightness(1.07); }
 
-button{
-  margin-inline: 5px;
-}
 
+button{ margin-inline: 5px; }
+
+
+.cartIcon{ filter: invert(100%); }
+.cartIcon--header{ width: 30px; }
+
+/* =========================
+   5) HERO
+   ========================= */
 .heroCard{
-  background-image: url(../public/hero_pict.png);
+  background-image: url("../assets/pics/hero_pict.png");
   padding-block: 7rem;
   margin-bottom: 1rem;
   background-position: center;
@@ -183,11 +142,14 @@ button{
   background-repeat: no-repeat;
 }
 
+/* =========================
+   6) SEARCH PANEL
+   ========================= */
 .searchPanel{
   max-width: 70%;
   margin: auto;
   border: 1px solid var(--line);
-  background: rgba(9,16,10,.8);
+  background: rgba(41, 49, 42, 0.8);
   border-radius: 16px;
   padding: 14px;
   display:grid;
@@ -246,6 +208,7 @@ button{
   color: var(--text);
 }
 
+/* search button style */
 .searchBtn{
   align-self:end;
   height: 44px;
@@ -264,6 +227,9 @@ button{
 
 .searchBtn:hover{ filter: brightness(1.06); }
 
+/* =========================
+   7) GENERIC CARDS (miniCard)
+   ========================= */
 .miniCard{
   margin: auto;
   border: 1px solid var(--line);
@@ -277,7 +243,22 @@ button{
 
 .miniCard h3{ margin:0 0 8px; font-weight:300; letter-spacing:.2px; }
 .miniCard p{ margin:0; color: var(--text-faint); font-weight:300; font-size:15px; line-height:1.45; }
+.loginCtaRow{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
+.loginCtaText{
+  margin: 0;
+  color: var(--text-faint);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* =========================
+   8) SLIDER (Home)
+   ========================= */
 .cardsSliderWrap{
   width: min(1120px, 92vw);
   margin: 18px auto 50px;
@@ -291,6 +272,22 @@ button{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
+}
+
+@media (max-width: 980px){
+  .cardsSlider{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+@media (max-width: 400px){
+  .cardsSlider{
+    grid-template-columns: 1fr;
+  }
+  .cardsSliderWrap{
+    grid-template-columns: 36px 1fr 36px; /* nyilak kicsit kompaktabbak */
+  }
 }
 
 .sliderLabel{
@@ -319,11 +316,14 @@ button{
 .cardsArrow:hover{ filter: brightness(1.08); }
 .cardsArrow:disabled{ opacity: .35; cursor: not-allowed; }
 
-.section{ 
+/* =========================
+   9) SECTIONS
+   ========================= */
+.section{
   max-width: fit-content;
   margin: auto;
   padding-bottom: 1rem;
- }
+}
 
 .sectionHead{
   display:flex;
@@ -344,8 +344,15 @@ button{
   font-weight: 800;
   color: rgba(241,255,243,0.7);
 }
-
 .sectionHead a:hover{ color:#fff; }
+
+/* =========================
+   10) CONCERT CARD
+   ========================= */
+.cardLink{
+  text-decoration: none;
+  color: inherit;
+}
 
 .card{
   border: 1px solid var(--line);
@@ -389,6 +396,13 @@ button{
   line-height: 1.35;
 }
 
+.concertThumb{
+  background-size: cover;
+  background-position: center;
+  min-height: 180px;
+}
+
+/* Home "cards" grid (ha marad használatban) */
 .cards{
   max-width: 90%;
   margin:auto;
@@ -398,22 +412,17 @@ button{
   padding-bottom: 32px;
 }
 
-.cardLink{
-  text-decoration: none;
-  color: inherit;
-}
-
-.concertThumb{
-  background-size: cover;
-  background-position: center;
-  min-height: 180px;
-}
-
+/* =========================
+   11) EMPTY STATE
+   ========================= */
 .emptyState{
   opacity: 0.8;
   margin-top: 18px;
 }
 
+/* =========================
+   12) FOOTER
+   ========================= */
 footer{
   margin-top: 50px;
   border-top: 1px solid var(--line);
@@ -421,9 +430,8 @@ footer{
   padding: 26px 0;
 }
 
-.footer{
-  margin-top: 32px;
-}
+.footer{ margin-top: 32px; }
+.footerBrand{ margin-bottom: 10px; }
 
 .footGrid{
   display:grid;
@@ -456,8 +464,10 @@ footer{
 }
 
 .authors{ font-size: 12px; }
-.footerBrand{ margin-bottom: 10px; }
 
+/* =========================
+   13) CART
+   ========================= */
 .c_list{
   margin:auto;
   padding: 0;
@@ -505,17 +515,6 @@ footer{
   max-width: 100%;
 }
 
-.card_home{
-  margin: auto;
-  width: min(1120px, 92vw);
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.03);
-  border-radius: 16px;
-  overflow:hidden;
-  box-shadow: var(--shadow);
-  transition: transform .15s ease, border-color .15s ease;
-}
-
 .cartItem{
   display:grid;
   grid-template-columns: 1fr 240px;
@@ -537,27 +536,45 @@ footer{
 
 .cartRemove{ border-radius: 12px; }
 
+/* =========================
+   14) SEATMAP (ConcertDetails uses adminSeat classes)
+   (dashboard seatmap külön css-ben is lehet; itt csak ami kell)
+   ========================= */
 .adminSeatLegend span{ color: var(--text-faint); }
 
 .adminSeat{
+  height: 46px;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,.12);
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight: 950;
-  padding-block: 0.5rem;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--green), var(--green2));
+  color: rgba(243,241,255,.92);
+  padding: 0;
 }
 
 .adminSeat.isSelected{
   outline: 3px solid rgba(255,255,255,.95);
   outline-offset: 2px;
 }
+.adminSeatGrid{
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  padding: 8px 0 12px;
+}
 
 .adminSeatGrid--details{
-  gap: 8px;
-  max-width: 980px;
-  margin-inline: auto;
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  padding: 8px 0 12px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .adminSeatGrid--details .adminSeat{
@@ -565,7 +582,87 @@ footer{
   height: 3rem;
   font-size: 0.875rem;
 }
+.adminStage{
+  width: 220px;
+  margin: 0 auto 14px;
+  margin-top: 12px;
+  text-align: center;
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(148,229,108,.12);
+  font-weight: 950;
+}
+.adminStageWrap{
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(10,9,16,.25);
+  padding: 14px;
+}
+.adminSeatLegend{
+  display:flex;
+  justify-content:center;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: rgba(243,241,255,.75);
+  font-weight: 750;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
 
+.adminSwatch{
+  display:inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+/* kategória színek */
+.adminSeat--A{ background: rgba(148,229,108,.95); color: #0b0a10; }
+.adminSeat--B{ background: rgba(34,197,94,.95); color: #0b0a10; }
+.adminSeat--C{ background: rgba(16,185,129,.55); color: rgba(243,241,255,.92); }
+
+.adminSwatch--A{ background: rgba(148,229,108,.95); }
+.adminSwatch--B{ background: rgba(34,197,94,.95); }
+.adminSwatch--C{ background: rgba(16,185,129,.55); }
+
+/* FOGLALT jelölés */
+.adminSwatch--SOLD{
+  background: #515c53;
+  border: 1px solid var(--line);
+}
+
+/* seat grid (public details) */
+.adminSeatGrid--details{
+  display:grid;
+  gap: 8px;
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+/* a seat gomb kinézete */
+.adminSeat{
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 950;
+  padding: 0;
+  width: 3rem;
+  height: 3rem;
+  font-size: 0.875rem;
+}
+
+.adminSeat.isSelected{
+  outline: 3px solid rgba(255,255,255,.95);
+  outline-offset: 2px;
+}
+
+/* =========================
+   15) LOGO THEME SWITCH (images)
+   ========================= */
 .logoImg{
   height: 34px;
   width: auto;
@@ -576,20 +673,16 @@ footer{
 .logoImg--light{ display: none; }
 .logoImg--dark{ display: block; }
 
-:root[data-theme="light"] .logoImg--dark{ display: none; }
-:root[data-theme="light"] .logoImg--light{ display: block; }
-
-.cartIcon--header{
-  width: 30px;
-}
-
+/* =========================
+   16) PROFILE MENU (dropdown)
+   ========================= */
 .profileMenu{
   position: absolute;
   right: 0;
-  background-color: var(--bg);
   top: calc(100% + 8px);
   min-width: 220px;
-  z-index: 1000;
+  z-index: 9999;
+  background-color: var(--bg);
 }
 
 .profileMenu__name{
@@ -602,12 +695,31 @@ footer{
   gap: 8px;
 }
 
-.pageLoading{
-  padding: 20px;
+/* ha még van ilyen a kódban */
+.profileMenu__actions a{
+  color: white !important;
+  font-weight: 400;
+  text-align: center;
 }
 
+/* =========================
+   17) MISC (legacy / extra)
+   ========================= */
+.pageLoading{ padding: 20px; }
+
+.featuredBlock { margin: 1rem 0 2rem; }
+.featuredCard { display: grid; grid-template-columns: minmax(260px, 420px) 1fr; gap: 1rem; align-items: start; }
+.featuredCopy { background: var(--card-bg, rgba(255,255,255,0.06)); border-radius: 12px; padding: 1rem; }
+.adminDescriptionRow { background: rgba(0,0,0,0.04); font-size: 0.95rem; }
+.performerActions { display:flex; gap:.5rem; align-items:center; }
+@media (max-width: 768px) { .featuredCard { grid-template-columns: 1fr; } }
+
+/* =========================
+   18) RESPONSIVE
+   ========================= */
 @media (max-width: 980px){
   .cardsSlider{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
   .searchPanel{
     max-width: min(58rem, 92vw);
     grid-template-columns: 1fr 1fr;
@@ -615,6 +727,7 @@ footer{
   .searchPanel > div:last-child{
     grid-column: 1 / -1;
   }
+
   .cards{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -622,6 +735,7 @@ footer{
   .cartItem{ grid-template-columns: 1fr; }
   .cartItemSide{ justify-items: stretch; }
   .cartDiscount, .cartRemove{ width: 100%; }
+
   .c_element{ grid-template-columns: 1fr; }
   .c_element_thumb{
     min-height: 12rem;
@@ -630,14 +744,24 @@ footer{
   }
 }
 
+
 @media (max-width: 520px){
+  .mobileOnly{ display: inline-flex; }
+  .desktopOnly{ display: none; }
   .nav{ display:none; }
+  .container{
+    width: 100%;
+    padding: 20px 12px 0;
+  }
+
   .searchPanel{
     max-width: 92vw;
     grid-template-columns: 1fr;
   }
+
   .cardsSliderWrap{ grid-template-columns: 40px 1fr 40px; }
   .cardsSlider{ grid-template-columns: 1fr; }
+
   .cards{ grid-template-columns: 1fr; }
   .footGrid{ grid-template-columns: 1fr 1fr; }
 
@@ -652,18 +776,47 @@ footer{
     font-size: 0.6875rem;
     border-radius: 0.5625rem;
   }
+  .mobileMenu { position: relative; }
+
+.mobileMenuDrop{
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+  z-index: 9999;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(10,9,16,.88);
+  overflow: hidden;
 }
 
+.mobileMenuItem{
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  color: rgba(243,241,255,.92);
+  cursor: pointer;
+  font-weight: 800;
+}
 
-.featuredBlock { margin: 1rem 0 2rem; }
-.featuredCard { display: grid; grid-template-columns: minmax(260px, 420px) 1fr; gap: 1rem; align-items: start; }
-.featuredCopy { background: var(--card-bg, rgba(255,255,255,0.06)); border-radius: 12px; padding: 1rem; }
-.adminDescriptionRow { background: rgba(0,0,0,0.04); font-size: 0.95rem; }
-.performerActions { display:flex; gap:.5rem; align-items:center; }
-@media (max-width: 768px) { .featuredCard { grid-template-columns: 1fr; } }
+.mobileMenuItem:hover{
+  background: rgba(255,255,255,.06);
+}
 
+.mobileMenuItemBtn{
+  background: transparent;
+}
 
-.topbar__inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-.nav { display:flex; gap:1rem; }
-.actions--menu { display:flex; align-items:center; gap:.75rem; position:relative; }
-.profileMenu { position:absolute; top:calc(100% + 8px); right:0; z-index:9999; }
+.mobileMenuDivider{
+  height: 1px;
+  background: rgba(255,255,255,.08);
+  margin: 6px 0;
+}
+}
+@media (min-width: 521px){
+  .mobileOnly{ display: none; }
+  .desktopOnly{ display: inline-flex; }
+}

@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import "../../dashboard.css";
+import "../../styles_/dashboard.css";
+import "../../styles_/dashboard.light.css";
 
 export function AdminLayout() {
   const [menuOpen, setMenuOpen] = useState(false);

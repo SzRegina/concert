@@ -1,0 +1,124 @@
+/* =========================================================
+   DASHBOARD.LIGHT.CSS
+   Csak light theme override-ok a Dashboard felületekre
+   ========================================================= */
+
+:root[data-theme="light"] .shell .topbar{
+  background: rgba(255,255,255,.75);
+  border-bottom: 1px solid var(--line);
+}
+
+:root[data-theme="light"] .shell .panel,
+:root[data-theme="light"] .shell .adminStageWrap,
+:root[data-theme="light"] .shell .adminPriceBox{
+  background: rgba(255,255,255,.85);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .dashboardSide{
+  background: rgba(255,255,255,.55);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .dashboardNavItem{
+  background: rgba(16,24,40,.04);
+  color: rgba(16,24,40,.92);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .dashboardNavItem:hover{
+  border-color: rgba(26,163,163,.35);
+}
+
+:root[data-theme="light"] .shell .dashboardNavItem.active{
+  background: rgba(26,163,163,.12);
+  border-color: rgba(26,163,163,.35);
+  color: rgba(16,24,40,1);
+}
+
+/* user active eltérés */
+:root[data-theme="light"] .shell .dashboardNavItem--user.active{
+  background: rgba(120,170,255,.14);
+  border-color: rgba(120,170,255,.30);
+}
+
+:root[data-theme="light"] .shell .actionBtn{
+  background: rgba(16,24,40,.04);
+  color: rgba(16,24,40,.92);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .actionBtn--solid{
+  background: linear-gradient(135deg, var(--green2), var(--green));
+  color: #fff;
+  border: 0;
+}
+
+:root[data-theme="light"] .shell .menu__drop{
+  background: rgba(255,255,255,.95);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .menu__item{
+  color: rgba(16,24,40,.92);
+}
+
+:root[data-theme="light"] .shell .menu__item:hover{
+  background: rgba(16,24,40,.06);
+}
+
+:root[data-theme="light"] .shell .adminMuted{
+  color: rgba(16,24,40,.70);
+}
+
+:root[data-theme="light"] .shell .adminTable{
+  background: rgba(255,255,255,.90);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .adminTable th{
+  background: rgba(26,163,163,.14);
+  color: rgba(16,24,40,.95);
+  border-bottom-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .adminTable td{
+  color: rgba(16,24,40,.90);
+  border-bottom-color: rgba(16,24,40,.08);
+}
+
+:root[data-theme="light"] .shell .adminInput,
+:root[data-theme="light"] .shell .adminSelect{
+  background: rgba(255,255,255,.92);
+  color: rgba(16,24,40,.92);
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .shell .adminSelect option{
+  background: #ffffff;
+  color: rgba(16,24,40,.92);
+}
+
+:root[data-theme="light"] .shell .adminDanger{
+  filter: saturate(1.05);
+}
+
+:root[data-theme="light"] .shell .adminSeatLegend{
+  color: rgba(16,24,40,.72);
+}
+
+:root[data-theme="light"] .shell .brandSub{
+  color: rgba(16,24,40,.72);
+}
+
+/* user form */
+:root[data-theme="light"] .shell .userLabel{
+  color: var(--text);
+}
+
+:root[data-theme="light"] .shell .userInput{
+  background: rgba(255,255,255,.92);
+  color: rgba(16,24,40,.92);
+  border-color: var(--line);
+}

@@ -1,13 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, SearchFilters } from "../../components/Search";
-import { ConcertCard } from "../../components/ConcertCard";
 import { Footer } from "../../components/Footer";
 import { useConcerts } from "../../hooks/useConcerts";
 import { usePlaces } from "../../hooks/usePlaces";
 import { useGenres } from "../../hooks/useGenres";
-import { Concert } from "../../types";
+import { ConcertSlider } from "../../components/ConcertSlider";
+import { useSeatLayout, MultiplierKey } from "../../hooks/useSeatLayout";
 
-const WINDOW = 4;
+function getWindowSize() {
+  const w = window.innerWidth;
+  if (w <= 400) return 1;   
+  if (w <= 520) return 1;   
+  if (w <= 980) return 2;   
+  if (w <= 1280) return 3;  
+  return 4;                 
+}
+const MULTI_UI: Record<MultiplierKey, { label: string; seatClass: string }> = {
+  M1: { label: "1.", seatClass: "adminSeat--C" },
+  M2: { label: "2.", seatClass: "adminSeat--B" },
+  M3: { label: "3.", seatClass: "adminSeat--A" },
+};
 
 export function Home() {
   const { concerts, loading, error } = useConcerts();
@@ -20,15 +32,23 @@ export function Home() {
     placeId: "",
     genreId: "",
   });
-  const [start, setStart] = useState(0);
+
+  const [windowSize, setWindowSize] = useState<number>(() => getWindowSize());
+
+  useEffect(() => {
+    const onResize = () => setWindowSize(getWindowSize());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const filtered = useMemo(() => {
     const q = filters.q.trim().toLowerCase();
     const date = filters.date.trim();
 
-    return concerts.filter((concert) => {
+    return concerts.filter((concert: any) => {
       const name = String(concert.name ?? "").toLowerCase();
       const performer = String(concert.performer_name ?? "").toLowerCase();
+
       const placeOk = !filters.placeId || String(concert.place_id ?? "") === filters.placeId;
       const genreOk = !filters.genreId || String(concert.genre_id ?? "") === filters.genreId;
       const qOk = !q || name.includes(q) || performer.includes(q);
@@ -37,24 +57,6 @@ export function Home() {
       return placeOk && genreOk && qOk && dateOk;
     });
   }, [concerts, filters]);
-
-  useEffect(() => {
-    setStart(0);
-  }, [filters]);
-
-  const maxStart = Math.max(0, filtered.length - WINDOW);
-  const canSlide = filtered.length > WINDOW;
-  const visibleConcerts = canSlide ? filtered.slice(start, start + WINDOW) : filtered;
-
-  const prev = () => {
-    if (!canSlide) return;
-    setStart((value) => (value <= 0 ? maxStart : value - 1));
-  };
-
-  const next = () => {
-    if (!canSlide) return;
-    setStart((value) => (value >= maxStart ? 0 : value + 1));
-  };
 
   if (loading) return <p>Betöltés…</p>;
   if (error) return <p>{error}</p>;
@@ -65,37 +67,10 @@ export function Home() {
         <Search concerts={concerts} places={places} genres={genres} onSearch={setFilters} />
       </div>
 
-      {filtered.length > 0 ? (
-        <>
-          <div className="sliderLabel">Koncertek</div>
-          <div className="cardsSliderWrap">
-            <button
-              className="cardsArrow cardsArrow--left"
-              type="button"
-              onClick={prev}
-              disabled={!canSlide}
-              aria-label="Előző"
-            >
-              ‹
-            </button>
-            <div className="cardsSlider">
-              {visibleConcerts.map((concert: Concert) => (
-                <ConcertCard key={concert.id} concert={concert} />
-              ))}
-            </div>
-            <button
-              className="cardsArrow cardsArrow--right"
-              type="button"
-              onClick={next}
-              disabled={!canSlide}
-              aria-label="Következő"
-            >
-              ›
-            </button>
-          </div>
-        </>
-      ) : (
+      {filtered.length === 0 ? (
         <p className="emptyState">Nincs találat a megadott szűrésre.</p>
+      ) : (
+        <ConcertSlider items={filtered} windowSize={windowSize} />
       )}
 
       <Footer />

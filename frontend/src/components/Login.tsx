@@ -72,30 +72,21 @@ export function Login() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <h3 style={{ margin: 0 }}>{title}</h3>
 
-            <div style={{ display: "flex", gap: 8 }}>
-              <button
-                type="button"
-                className="searchBtn"
-                onClick={() => {
-                  setError("");
-                  setMode("login");
-                }}
-                disabled={loading || mode === "login"}
-              >
-                Belépés
-              </button>
-              <button
-                type="button"
-                className="searchBtn"
-                onClick={() => {
-                  setError("");
-                  setMode("register");
-                }}
-                disabled={loading || mode === "register"}
-              >
-                Regisztráció
-              </button>
-            </div>
+            <div className="loginCtaRow">
+            <p className="loginCtaText">Nem regisztráltál még?</p>
+
+            <button
+              type="button"
+              className="searchBtn"
+              onClick={() => {
+                setError("");
+                setMode("register");
+              }}
+              disabled={loading || mode === "register"}
+            >
+              Regisztráció
+            </button>
+          </div>
           </div>
 
           <form

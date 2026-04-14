@@ -14,10 +14,10 @@ function seatNumber(r: number, c: number, cols: number) {
   return (r - 1) * cols + c;
 }
 
-const MULTI_UI: Record<MultiplierKey, { seatClass: string }> = {
-  M1: { seatClass: "adminSeat--C" },
-  M2: { seatClass: "adminSeat--B" },
-  M3: { seatClass: "adminSeat--A" },
+const MULTI_UI: Record<MultiplierKey, { label: string; seatClass: string }> = {
+  M1: { label: "1.", seatClass: "adminSeat--C" },
+  M2: { label: "2.", seatClass: "adminSeat--B" },
+  M3: { label: "3.", seatClass: "adminSeat--A" },
 };
 
 export function ConcertDetailsPage() {
@@ -154,18 +154,24 @@ export function ConcertDetailsPage() {
             </p>
           </div>
           <div className="adminStageWrap">
-          <div className="adminStage">Színpad</div>
+          
           {layoutLoading && <p>Kiosztás betöltése…</p>}
           {layoutError && <p>{layoutError}</p>}
 
           <div className="adminSeatLegend" style={{ display: "flex", gap: 16, alignItems: "center" }}>
-            {(["M1", "M2", "M3"] as MultiplierKey[]).map((k) => (
-              <span key={k} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                <i className={`adminSwatch adminSwatch--SOLD ${MULTI_UI[k].seatClass.replace("adminSeat", "adminSwatch")}`} />
-                <b>{k}:</b> {priceFor(k)} Ft
-              </span>                
-            ))}
+          {(["M1", "M2", "M3"] as MultiplierKey[]).map((k) => (
+            <span key={k} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+              <i className={`adminSwatch ${MULTI_UI[k].seatClass.replace("adminSeat", "adminSwatch")}`} />
+              <b>{MULTI_UI[k].label} árkategória:</b> {priceFor(k)} Ft
+            </span>
+          ))}
+
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <i className="adminSwatch adminSwatch--SOLD" />
+            <b>FOGLALT</b>
+          </span>
           </div>
+          <div className="adminStage">Színpad</div>
           <div
             className="adminSeatGrid adminSeatGrid--details"
             aria-label="Seatmap"
@@ -194,8 +200,8 @@ export function ConcertDetailsPage() {
                     style={{
                       cursor: existsInDb && !isReserved ? "pointer" : "not-allowed",
                       opacity: existsInDb ? 1 : 0.35,
-                      backgroundColor: isReserved ? "rgb(141, 3, 3)" : "none",
-                      color: isReserved ? "white" : "none",
+                      backgroundColor: isReserved ? "rgb(141, 3, 3)" : undefined,
+                      color: isReserved ? "white" : undefined,
                       position: "relative",
                     }}
                   >
