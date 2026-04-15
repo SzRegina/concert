@@ -112,7 +112,7 @@ function useCrudList<T>(endpoint: string, mapFn: (item: any) => T) {
     } finally {
       setLoading(false);
     }
-  }, [endpoint]);
+  }, [endpoint, mapFn]);
 
   useEffect(() => {
     load();

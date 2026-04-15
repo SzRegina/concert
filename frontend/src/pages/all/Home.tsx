@@ -5,7 +5,6 @@ import { useConcerts } from "../../hooks/useConcerts";
 import { usePlaces } from "../../hooks/usePlaces";
 import { useGenres } from "../../hooks/useGenres";
 import { ConcertSlider } from "../../components/ConcertSlider";
-import { useSeatLayout, MultiplierKey } from "../../hooks/useSeatLayout";
 
 function getWindowSize() {
   const w = window.innerWidth;
@@ -15,11 +14,6 @@ function getWindowSize() {
   if (w <= 1280) return 3;  
   return 4;                 
 }
-const MULTI_UI: Record<MultiplierKey, { label: string; seatClass: string }> = {
-  M1: { label: "1.", seatClass: "adminSeat--C" },
-  M2: { label: "2.", seatClass: "adminSeat--B" },
-  M3: { label: "3.", seatClass: "adminSeat--A" },
-};
 
 export function Home() {
   const { concerts, loading, error } = useConcerts();

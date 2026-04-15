@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useShows, ShowRow, ShowStatus } from "../../hooks/useShows";
 import { API_BASE } from "../../utility/config";
-import { formatDate } from "../../utility/date";
 
 const STATUS_TO_API: Record<ShowStatus, number> = {
   Aktív: 0,

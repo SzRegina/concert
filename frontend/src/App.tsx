@@ -11,7 +11,7 @@ import { OrdersPage } from "./pages/admin/OrdersPage";
 import { ShowsPage } from "./pages/admin/ShowsPage";
 import { SeatsPage } from "./pages/admin/SeatsPage";
 import { UserLayout } from "./pages/regUser/UserLayout";
-import { REG_OrdersPage } from "./pages/regUser/REG_OrdersPage";
+import { REG_OrdersPage as RegOrdersPage} from "./pages/regUser/REG_OrdersPage";
 import { PersonalData } from "./pages/regUser/PersonalData";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { User } from "./types";
@@ -79,7 +79,7 @@ function AppRoutes() {
           >
             <Route index element={<Navigate to="personal" replace />} />
             <Route path="personal" element={<PersonalData onUserUpdated={() => refresh()} />} />
-            <Route path="orders" element={<REG_OrdersPage />} />
+            <Route path="orders" element={<RegOrdersPage />} />
           </Route>
 
           <Route path="/cart" element={<Cart />} />

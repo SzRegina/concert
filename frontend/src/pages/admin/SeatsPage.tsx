@@ -66,16 +66,6 @@ export function SeatsPage() {
     }));
   };
 
-  const handleMultiplierChange = (key: MultiplierKey, value: string) => {
-    const n = Number(value);
-    setLayout((prev) => ({
-      ...prev,
-      multipliers: {
-        ...prev.multipliers,
-        [key]: Number.isFinite(n) ? n : prev.multipliers[key],
-      },
-    }));
-  };
 
   const handleSave = async () => {
     await save();

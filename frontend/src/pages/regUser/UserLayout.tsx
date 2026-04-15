@@ -1,5 +1,5 @@
-import { Link, NavLink, Outlet, Navigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import { useRef } from "react";
 import "../../styles_/dashboard.css";
 import "../../styles_/dashboard.light.css";
 
@@ -9,7 +9,7 @@ type UserLayoutProps = {
 };
 
 export function UserLayout({ user, onLogout }: UserLayoutProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const userName = user?.name ?? user?.username ?? user?.email ?? "Felhasználó";

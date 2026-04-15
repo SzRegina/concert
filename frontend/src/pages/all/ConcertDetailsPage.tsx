@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useConcerts } from "../../hooks/useConcerts";
 import { useSeatLayout, MultiplierKey } from "../../hooks/useSeatLayout";
@@ -91,7 +91,6 @@ export function ConcertDetailsPage() {
     .filter(([k, v]) => v && !reservedSeatMap[k])
     .map(([k]) => k);
 
-  const reservedCount = useMemo(() => Object.values(reservedSeatMap).filter(Boolean).length, [reservedSeatMap]);
 
   const addToCart = () => {
     if (!concert) return;

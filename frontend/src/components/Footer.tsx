@@ -1,11 +1,5 @@
 import { Link } from "react-router-dom";
 
-const legalLinks = [
-  { label: "Impresszum", href: "#impresszum" },
-  { label: "ÁSZF", href: "#aszf" },
-  { label: "Adatkezelés", href: "#adatkezeles" },
-];
-
 export function Footer() {
   return (
     <footer className="footer">
