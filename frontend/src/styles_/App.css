@@ -820,3 +820,9 @@ footer{
   .mobileOnly{ display: none; }
   .desktopOnly{ display: inline-flex; }
 }
+@media (max-width: 450px){
+  .adminSeatGrid--details{
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+}
