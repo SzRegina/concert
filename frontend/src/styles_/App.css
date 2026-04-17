@@ -568,19 +568,19 @@ footer{
 }
 
 .adminSeatGrid--details{
-  display: grid;
-  gap: 10px;
-  justify-content: center;
-  padding: 8px 0 12px;
+  width: 100%;
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;
+  margin-inline: 0;
+  padding: 8px 6px 10px;
 }
 
 .adminSeatGrid--details .adminSeat{
-  width: 3rem;
-  height: 3rem;
-  font-size: 0.875rem;
+  min-width: 2.6rem;
+  min-height: 2.6rem;
 }
 .adminStage{
   width: 220px;
@@ -824,5 +824,67 @@ footer{
   .adminSeatGrid--details{
     justify-content: flex-start;
     margin-left: 0;
+  }
+}
+@media (max-width: 350px){
+  .adminSeatGrid--details{
+    mask-image: linear-gradient(to right, transparent, black 18px, black calc(100% - 18px), transparent);
+  }
+}
+@media (max-width: 680px){
+  .adminSeatGrid--details{
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
+
+@media (max-width: 420px){
+  .adminSeatGrid--details .adminSeat{
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+    font-size: 0.75rem;
+  }
+}
+.authHint{
+  margin: 0;            
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.authPanel{
+  max-width: 520px;
+}
+
+
+@media (max-width: 600px){
+  .authPanel{
+    max-width: 92vw;
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+  .authPanel .field{
+    width: 100%;
+  }
+  .authPanel .input,
+  .authPanel .select{
+    width: 100%;
+  }
+  .authPanel .searchBtn{
+    width: 100%;
+  }
+}
+@media (max-width: 420px){
+  .authPanel{
+    padding: 12px;
+  }
+}
+@media (max-width: 600px){
+  .miniCard > div[style*="justify-content: space-between"]{
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  .miniCard > div[style*="justify-content: space-between"] > div{
+    width: 100%;
+    justify-content: space-between;
   }
 }

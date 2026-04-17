@@ -194,7 +194,8 @@ export function ConcertDetailsPage() {
             <div
               className="adminSeatGrid adminSeatGrid--details"
               aria-label="Seatmap"
-              style={{ gridTemplateColumns: `repeat(${cols || 1}, 1fr)`, marginTop: 12 }}
+              style={{ gridTemplateColumns: `repeat(${cols || 1}, 1fr)`, marginTop: 12,
+              minWidth: `calc(${cols || 1} * 2.6rem + (${cols || 1} - 1) * 10px)`,}} 
             >
               {Array.from({ length: rows }).map((_, rIdx) => {
                 const r = rIdx + 1;
