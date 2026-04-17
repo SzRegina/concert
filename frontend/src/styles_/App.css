@@ -589,7 +589,7 @@ footer{
 
   width: 100%;
   max-width: 100%;
-  overflow: hidden; /* a wrapper scrolloz */
+  overflow: visible;
 }
 
 .adminStage{
@@ -639,17 +639,22 @@ footer{
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 6px 6px 10px;
+
+ 
+  padding: 6px 10px 10px;
 }
 
-/* ✅ A details grid szélességét a tartalom adja, így lesz scroll */
+/* ✅ Details grid: mindig tartalom-széles, sose 100% */
 .adminSeatGrid--details{
   display: grid;
   gap: 8px;
-  width: max-content;
-  max-width: none;
-  margin: 0;
-  justify-content: start;
+
+  width: max-content !important;   
+  max-width: none !important;
+  margin: 0 !important;
+
+  justify-content: start !important;
+  padding: 0 !important;           
 }
 
 /* =========================
