@@ -630,6 +630,7 @@ footer{
 .adminSeatGrid--details{
   display: grid;
   gap: 8px;
+  --seatsize: 3rem;
 
   width: 100%;
   max-width: 100%;
@@ -871,4 +872,21 @@ footer{
 
 @media (max-width: 420px){
   .authPanel{ padding: 12px; }
+}
+
+
+@media (max-width: 680px){
+  .adminSeatGrid--details{
+    --seatSize: clamp(34px, 9.5vw, 46px);
+  }
+}
+@media (max-width: 520px){
+  .adminSeatGrid--details{
+    --seatSize: clamp(30px, 9vw, 40px);
+  }
+}
+@media (max-width: 420px){
+  .adminSeatGrid--details{
+    --seatSize: clamp(28px, 8.8vw, 36px);
+  }
 }

@@ -30,7 +30,7 @@ export function ConcertDetailsPage() {
 
   const concert = concerts.find((c) => c.id === id);
 
-  // ✅ KÉP URL JAVÍTÁS
+  // ✅ KÉP URL (Railway public) – abszolút linkké alakítjuk
   const pictureUrl = useMemo(() => toAbsoluteUrl(concert?.picture), [concert?.picture]);
 
   const { layout, seatIds, loading: layoutLoading, error: layoutError } = useSeatLayout(concert?.room_id ?? "");
@@ -99,6 +99,11 @@ export function ConcertDetailsPage() {
 
   const reservedCount = useMemo(() => Object.values(reservedSeatMap).filter(Boolean).length, [reservedSeatMap]);
 
+  const totalSelectedPrice = useMemo(
+    () => selectedSeatIds.reduce((sum, sid) => sum + seatPrice(sid), 0),
+    [selectedSeatIds, reservedSeatMap, layout.seatMap, layout.multipliers, basePrice]
+  );
+
   const addToCart = () => {
     if (!concert) return;
 
@@ -154,7 +159,6 @@ export function ConcertDetailsPage() {
       {concert && (
         <>
           <div className="miniCard" style={{ marginBottom: 14, overflow: "hidden" }}>
-            {/* ✅ KÉP MEGJELENÍTÉS (ha van) */}
             {pictureUrl && (
               <div style={{ marginBottom: 12 }}>
                 <img
@@ -191,55 +195,71 @@ export function ConcertDetailsPage() {
 
             <div className="adminStage">Színpad</div>
 
+            {/* ✅ ÚJ: külön scroll konténer (ez szünteti meg a levágást) */}
             <div
-              className="adminSeatGrid adminSeatGrid--details"
-              aria-label="Seatmap"
-              style={{ gridTemplateColumns: `repeat(${cols || 1}, 1fr)`, marginTop: 12,
-              minWidth: `calc(${cols || 1} * 2.6rem + (${cols || 1} - 1) * 10px)`,}} 
+              className="seatmapScroll"
+              aria-label="Seatmap scroll wrapper"
+              style={{
+                width: "100%",
+                maxWidth: "100%",
+                overflowX: "auto",
+                overflowY: "hidden",
+                WebkitOverflowScrolling: "touch",
+                padding: "6px 6px 10px",
+              }}
             >
-              {Array.from({ length: rows }).map((_, rIdx) => {
-                const r = rIdx + 1;
-                return Array.from({ length: cols }).map((__, cIdx) => {
-                  const c = cIdx + 1;
-                  const sid = seatId(r, c);
-                  const n = seatNumber(r, c, cols || 1);
+              <div
+                className="adminSeatGrid adminSeatGrid--details"
+                aria-label="Seatmap"
+                style={{
+                  // ✅ FIX: nincs minWidth matek; a grid saját tartalma határozza meg a szélességet
+                  gridTemplateColumns: `repeat(${cols || 1}, var(--seatSize, 3rem))`,
+                  justifyContent: "start",
+                  marginTop: 12,
+                }}
+              >
+                {Array.from({ length: rows }).map((_, rIdx) => {
+                  const r = rIdx + 1;
+                  return Array.from({ length: cols }).map((__, cIdx) => {
+                    const c = cIdx + 1;
+                    const sid = seatId(r, c);
+                    const n = seatNumber(r, c, cols || 1);
 
-                  const cat = seatCategory(sid);
-                  const isSel = !!selected[sid];
-                  const existsInDb = !!seatIds[sid];
-                  const isReserved = !!reservedSeatMap[sid];
+                    const cat = seatCategory(sid);
+                    const isSel = !!selected[sid];
+                    const existsInDb = !!seatIds[sid];
+                    const isReserved = !!reservedSeatMap[sid];
 
-                  return (
-                    <button
-                      key={sid}
-                      type="button"
-                      className={`adminSeat ${MULTI_UI[cat].seatClass} ${isSel ? "isSelected" : ""}`}
-                      onClick={() => toggleSeat(sid)}
-                      title={isReserved ? `#${n} (${sid}) • FOGLALT` : `#${n} (${sid}) • ${seatPrice(sid)} Ft`}
-                      disabled={!existsInDb || isReserved}
-                      style={{
-                        cursor: existsInDb && !isReserved ? "pointer" : "not-allowed",
-                        opacity: existsInDb ? 1 : 0.35,
-                        backgroundColor: isReserved ? "rgb(141, 3, 3)" : undefined,
-                        color: isReserved ? "white" : undefined,
-                        position: "relative",
-                      }}
-                    >
-                      {isReserved ? "X" : n}
-                    </button>
-                  );
-                });
-              })}
+                    return (
+                      <button
+                        key={sid}
+                        type="button"
+                        className={`adminSeat ${MULTI_UI[cat].seatClass} ${isSel ? "isSelected" : ""}`}
+                        onClick={() => toggleSeat(sid)}
+                        title={isReserved ? `#${n} (${sid}) • FOGLALT` : `#${n} (${sid}) • ${seatPrice(sid)} Ft`}
+                        disabled={!existsInDb || isReserved}
+                        style={{
+                          cursor: existsInDb && !isReserved ? "pointer" : "not-allowed",
+                          opacity: existsInDb ? 1 : 0.35,
+                          backgroundColor: isReserved ? "rgb(141, 3, 3)" : undefined,
+                          color: isReserved ? "white" : undefined,
+                        }}
+                      >
+                        {isReserved ? "X" : n}
+                      </button>
+                    );
+                  });
+                })}
+              </div>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 14 }}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 14, flexWrap: "wrap" }}>
             <button className="btn" onClick={addToCart}>
               Kosárba ({selectedSeatIds.length})
             </button>
             <div style={{ opacity: 0.85 }}>
-              Összesen:{" "}
-              <b>{selectedSeatIds.reduce((sum, sid) => sum + seatPrice(sid), 0)} Ft</b>
+              Összesen: <b>{totalSelectedPrice} Ft</b>
             </div>
           </div>
         </>
