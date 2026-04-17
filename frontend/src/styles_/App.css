@@ -123,10 +123,9 @@ img{ max-width:100%; display:block; }
 
 .btn:hover{ filter: brightness(1.07); }
 
-
 button{ margin-inline: 5px; }
 
-
+/* Cart icon */
 .cartIcon{ filter: invert(100%); }
 .cartIcon--header{ width: 30px; }
 
@@ -243,9 +242,11 @@ button{ margin-inline: 5px; }
 
 .miniCard h3{ margin:0 0 8px; font-weight:300; letter-spacing:.2px; }
 .miniCard p{ margin:0; color: var(--text-faint); font-weight:300; font-size:15px; line-height:1.45; }
+
+/* Login CTA row */
 .loginCtaRow{
-  display: flex;
-  align-items: center;
+  display:flex;
+  align-items:center;
   gap: 8px;
 }
 
@@ -280,13 +281,12 @@ button{ margin-inline: 5px; }
   }
 }
 
-
 @media (max-width: 400px){
   .cardsSlider{
     grid-template-columns: 1fr;
   }
   .cardsSliderWrap{
-    grid-template-columns: 36px 1fr 36px; /* nyilak kicsit kompaktabbak */
+    grid-template-columns: 36px 1fr 36px;
   }
 }
 
@@ -320,8 +320,9 @@ button{ margin-inline: 5px; }
    9) SECTIONS
    ========================= */
 .section{
-  max-width: fit-content;
-  margin: auto;
+  width: min(1120px, 92vw);
+  max-width: 100%;
+  margin: 0 auto;
   padding-bottom: 1rem;
 }
 
@@ -402,7 +403,6 @@ button{ margin-inline: 5px; }
   min-height: 180px;
 }
 
-/* Home "cards" grid (ha marad használatban) */
 .cards{
   max-width: 90%;
   margin:auto;
@@ -537,68 +537,12 @@ footer{
 .cartRemove{ border-radius: 12px; }
 
 /* =========================
-   14) SEATMAP (ConcertDetails uses adminSeat classes)
-   (dashboard seatmap külön css-ben is lehet; itt csak ami kell)
+   14) SEATMAP (clean, single-source)
    ========================= */
+
+/* legend */
 .adminSeatLegend span{ color: var(--text-faint); }
 
-.adminSeat{
-  height: 46px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,.12);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight: 950;
-  cursor: pointer;
-  background: linear-gradient(135deg, var(--green), var(--green2));
-  color: rgba(243,241,255,.92);
-  padding: 0;
-}
-
-.adminSeat.isSelected{
-  outline: 3px solid rgba(255,255,255,.95);
-  outline-offset: 2px;
-}
-.adminSeatGrid{
-  display: grid;
-  gap: 10px;
-  justify-content: center;
-  padding: 8px 0 12px;
-}
-
-.adminSeatGrid--details{
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  justify-content: flex-start;
-  margin-inline: 0;
-  padding: 8px 6px 10px;
-}
-
-.adminSeatGrid--details .adminSeat{
-  min-width: 2.6rem;
-  min-height: 2.6rem;
-}
-.adminStage{
-  width: 220px;
-  margin: 0 auto 14px;
-  margin-top: 12px;
-  text-align: center;
-  padding: 14px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(148,229,108,.12);
-  font-weight: 950;
-}
-.adminStageWrap{
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: rgba(10,9,16,.25);
-  padding: 14px;
-}
 .adminSeatLegend{
   display:flex;
   justify-content:center;
@@ -633,15 +577,30 @@ footer{
   border: 1px solid var(--line);
 }
 
-/* seat grid (public details) */
-.adminSeatGrid--details{
-  display:grid;
-  gap: 8px;
-  max-width: 980px;
-  margin-inline: auto;
+/* stage wrap + stage */
+.adminStageWrap{
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(10,9,16,.25);
+  padding: 14px;
+
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; /* a grid saját scrollt kap */
 }
 
-/* a seat gomb kinézete */
+.adminStage{
+  width: min(520px, 100%);
+  margin: 12px auto 14px;
+  text-align: center;
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(148,229,108,.12);
+  font-weight: 950;
+}
+
+/* seat button (alap) */
 .adminSeat{
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,.12);
@@ -650,14 +609,80 @@ footer{
   justify-content:center;
   font-weight: 950;
   padding: 0;
+  cursor: pointer;
+}
+
+/* selected */
+.adminSeat.isSelected{
+  outline: 3px solid rgba(255,255,255,.95);
+  outline-offset: 2px;
+}
+
+/* grid alap */
+.adminSeatGrid{
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  padding: 8px 0 12px;
+}
+
+/* PUBLIC DETAILS seat grid: scroll + clamp */
+.adminSeatGrid--details{
+  display: grid;
+  gap: 8px;
+
+  width: 100%;
+  max-width: 100%;
+  justify-content: start;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 8px 8px 12px;
+}
+
+/* default seat méret (desktop/tablet) */
+.adminSeatGrid--details .adminSeat{
   width: 3rem;
   height: 3rem;
   font-size: 0.875rem;
 }
 
-.adminSeat.isSelected{
-  outline: 3px solid rgba(255,255,255,.95);
-  outline-offset: 2px;
+/* 680 alatt: rugalmas gombok (ez oldja a 680–520 közti csúnyaságot is) */
+@media (max-width: 680px){
+  .adminSeatGrid--details .adminSeat{
+    width: clamp(34px, 9.5vw, 46px);
+    height: clamp(34px, 9.5vw, 46px);
+    font-size: clamp(12px, 3.2vw, 14px);
+    border-radius: 10px;
+  }
+}
+
+/* 520 alatt: még tömörebb */
+@media (max-width: 520px){
+  .adminSeatGrid--details{
+    gap: 0.3125rem;
+    padding: 8px 6px 12px;
+  }
+  .adminSeatGrid--details .adminSeat{
+    width: clamp(30px, 9vw, 40px);
+    height: clamp(30px, 9vw, 40px);
+    font-size: clamp(11px, 3vw, 13px);
+    border-radius: 9px;
+  }
+}
+
+/* 420 alatt: extra kicsi kijelzőre */
+@media (max-width: 420px){
+  .adminSeatGrid--details{
+    padding: 8px 4px 12px;
+  }
+  .adminSeatGrid--details .adminSeat{
+    width: clamp(28px, 8.8vw, 36px);
+    height: clamp(28px, 8.8vw, 36px);
+    font-size: clamp(10px, 2.8vw, 12px);
+  }
 }
 
 /* =========================
@@ -714,12 +739,21 @@ footer{
 .performerActions { display:flex; gap:.5rem; align-items:center; }
 @media (max-width: 768px) { .featuredCard { grid-template-columns: 1fr; } }
 
+/* auth helpers */
+.authHint{
+  margin: 0;
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.authPanel{
+  max-width: 520px;
+}
+
 /* =========================
    18) RESPONSIVE
    ========================= */
 @media (max-width: 980px){
-  .cardsSlider{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
   .searchPanel{
     max-width: min(58rem, 92vw);
     grid-template-columns: 1fr 1fr;
@@ -744,11 +778,11 @@ footer{
   }
 }
 
-
 @media (max-width: 520px){
   .mobileOnly{ display: inline-flex; }
   .desktopOnly{ display: none; }
   .nav{ display:none; }
+
   .container{
     width: 100%;
     padding: 20px 12px 0;
@@ -765,126 +799,76 @@ footer{
   .cards{ grid-template-columns: 1fr; }
   .footGrid{ grid-template-columns: 1fr 1fr; }
 
-  .adminSeatGrid--details{
-    max-width: 100%;
-    gap: 0.3125rem;
-  }
-
-  .adminSeatGrid--details .adminSeat{
-    width: 1.75rem;
-    height: 1.75rem;
-    font-size: 0.6875rem;
-    border-radius: 0.5625rem;
-  }
   .mobileMenu { position: relative; }
 
-.mobileMenuDrop{
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  min-width: 220px;
-  z-index: 9999;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(10,9,16,.88);
-  overflow: hidden;
+  .mobileMenuDrop{
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 220px;
+    z-index: 9999;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(10,9,16,.88);
+    overflow: hidden;
+  }
+
+  .mobileMenuItem{
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    background: transparent;
+    border: 0;
+    color: rgba(243,241,255,.92);
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .mobileMenuItem:hover{
+    background: rgba(255,255,255,.06);
+  }
+
+  .mobileMenuItemBtn{ background: transparent; }
+
+  .mobileMenuDivider{
+    height: 1px;
+    background: rgba(255,255,255,.08);
+    margin: 6px 0;
+  }
 }
 
-.mobileMenuItem{
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 12px 14px;
-  background: transparent;
-  border: 0;
-  color: rgba(243,241,255,.92);
-  cursor: pointer;
-  font-weight: 800;
-}
-
-.mobileMenuItem:hover{
-  background: rgba(255,255,255,.06);
-}
-
-.mobileMenuItemBtn{
-  background: transparent;
-}
-
-.mobileMenuDivider{
-  height: 1px;
-  background: rgba(255,255,255,.08);
-  margin: 6px 0;
-}
-}
 @media (min-width: 521px){
   .mobileOnly{ display: none; }
   .desktopOnly{ display: inline-flex; }
 }
-@media (max-width: 450px){
-  .adminSeatGrid--details{
-    justify-content: flex-start;
-    margin-left: 0;
-  }
-}
-@media (max-width: 350px){
-  .adminSeatGrid--details{
-    mask-image: linear-gradient(to right, transparent, black 18px, black calc(100% - 18px), transparent);
-  }
-}
-@media (max-width: 680px){
-  .adminSeatGrid--details{
-    padding-left: 4px;
-    padding-right: 4px;
-  }
-}
 
-@media (max-width: 420px){
-  .adminSeatGrid--details .adminSeat{
-    min-width: 2.2rem;
-    min-height: 2.2rem;
-    font-size: 0.75rem;
-  }
-}
-.authHint{
-  margin: 0;            
-  opacity: 0.85;
-  font-weight: 600;
-}
-
-.authPanel{
-  max-width: 520px;
-}
-
-
+/* Login/Register – 600 alatt ne csússzon össze */
 @media (max-width: 600px){
   .authPanel{
     max-width: 92vw;
     grid-template-columns: 1fr !important;
     gap: 10px;
   }
-  .authPanel .field{
-    width: 100%;
-  }
+  .authPanel .field{ width: 100%; }
+
   .authPanel .input,
-  .authPanel .select{
-    width: 100%;
-  }
-  .authPanel .searchBtn{
-    width: 100%;
-  }
-}
-@media (max-width: 420px){
-  .authPanel{
-    padding: 12px;
-  }
-}
-@media (max-width: 600px){
+  .authPanel .select{ width: 100%; }
+
+  .authPanel .searchBtn{ width: 100%; }
+
+  /* a Login header sor (title + CTA) essen egymás alá */
   .miniCard > div[style*="justify-content: space-between"]{
     flex-direction: column;
     align-items: flex-start !important;
+    gap: 10px;
   }
   .miniCard > div[style*="justify-content: space-between"] > div{
     width: 100%;
     justify-content: space-between;
   }
+}
+
+@media (max-width: 420px){
+  .authPanel{ padding: 12px; }
 }
