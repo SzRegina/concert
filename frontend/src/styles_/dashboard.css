@@ -279,6 +279,29 @@
   background: #0b0a10;
   color: #f3f1ff;
 }
+/* ======= ADMIN SELECT DROPDOWN FIX (dark mode) ======= */
+
+.shell{
+  color-scheme: dark;
+}
+
+.shell select.adminSelect,
+.shell select.adminInput,
+.shell .adminSelect{
+  background: #0b0a10 !important;
+  color: #f3f1ff !important;
+}
+
+.shell select.adminSelect option,
+.shell select.adminInput option{
+  background: #0b0a10 !important;
+  color: #f3f1ff !important;
+}
+
+.shell select.adminSelect option[value=""],
+.shell select.adminInput option[value=""]{
+  color: rgba(243,241,255,.55) !important;
+}
 
 .shell .adminDanger{
   border: 0;
