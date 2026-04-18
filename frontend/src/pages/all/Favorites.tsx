@@ -1,9 +1,16 @@
+import { useMemo } from "react";
 import { useConcerts } from "../../hooks/useConcerts";
 import { formatDate } from "../../utility/date";
+import { toAbsoluteUrl } from "../../utility/picsMedia";
 
 export function Favorites() {
   const { concerts, loading, error } = useConcerts();
   const featured = concerts?.[0];
+
+  const pictureUrl = useMemo(
+    () => toAbsoluteUrl(featured?.picture),
+    [featured?.picture]
+  );
 
   if (loading) return <p>Betöltés…</p>;
   if (error) return <p>{error}</p>;
@@ -14,25 +21,24 @@ export function Favorites() {
       <div className="sectionHead">
         <h2>Válogatásunkban kiemelt előadó és koncert.</h2>
       </div>
+
       <div className="featuredCopy">
         <h3>{featured.performer_name || featured.name}</h3>
         <p>{featured.performer_description}</p>
+
         <div
           className="thumb concertThumb"
           style={{
-            backgroundImage: featured.picture
-              ? `url(http://127.0.0.1:8000${featured.picture})`
-              : "none",
+            backgroundImage: pictureUrl ? `url(${pictureUrl})` : "none",
           }}
         />
-              <p>{featured.name}</p>
-      <p>{featured.place_name}</p>
 
-      <p>{formatDate(featured.date)}</p>
-      <p>Alapár: {featured.base_price} Ft</p>
-      <p>{featured.description} </p>
+        <p>{featured.name}</p>
+        <p>{featured.place_name}</p>
+        <p>{formatDate(featured.date)}</p>
+        <p>Alapár: {featured.base_price} Ft</p>
+        <p>{featured.description}</p>
       </div>
-
     </section>
   );
 }

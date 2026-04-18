@@ -26,7 +26,7 @@ export function Footer() {
         </div>
 
         <div className="authors">
-          <br />© 2026 SEATY – Vizsgaremek UI – React + TypeScript (CRA),
+          <br />© 2026 SEATY –
           <br />Bíró Eszter &amp; Szépréthy Regina
         </div>
       </div>
