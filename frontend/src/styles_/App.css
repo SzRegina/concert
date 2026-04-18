@@ -633,26 +633,28 @@ footer{
   padding: 8px 0 12px;
 }
 
-/* ✅ SCROLL WRAPPER (Public details) */
 .seatmapScroll{
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scrollbar-gutter: stable both-edges;
+
+  /* ez a kulcs: a tartalmat középre húzza, ha kifér */
+  display: flex;
+  justify-content: center;
+
+  padding: 6px 6px 10px;
 }
 
 /* ✅ Details grid: mindig tartalom-széles, sose 100% */
+/* A grid maga legyen "content-sized", hogy scroll esetén legyen mit scrollozni */
 .adminSeatGrid--details{
-  
-  display: grid;
-  gap: 8px;
+  width: max-content;     /* a grid szélessége a seat oszlopokból áll össze */
+  max-width: none;
+  margin: 0 auto;         /* ha a wrapper nem flex lenne, ez is segít */
+}          
 
-  width: max-content !important;
-  max-width: none !important;
-  justify-content: start !important;           
-}
 
 /* =========================
    15) LOGO THEME SWITCH (images)

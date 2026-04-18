@@ -225,7 +225,6 @@ export function ConcertDetailsPage() {
                 style={{
                   gridTemplateColumns: `repeat(${cols || 1}, var(--seatSize))`,
                   minWidth: `calc(${cols || 1} * var(--seatSize) + (${cols || 1} - 1) * 8px)`,
-                  justifyContent: "start",
                   marginTop: 12,
                 }}
               >
