@@ -67,10 +67,6 @@ export function Cart() {
     return Number(discountMap.get(discountId)?.value ?? 100);
   };
 
-  const getDiscountLabel = (discountId: number) => {
-    return discountMap.get(discountId)?.type ?? "normál";
-  };
-
   const total = items.reduce((sum, item) => {
     const discountPercent = getDiscountPercent(item.discountId);
     return sum + item.price * (discountPercent / 100);

@@ -12,7 +12,7 @@ class PerformerSeeder extends Seeder
         $performers = [
             ['name' => 'Fish!', 'genre' => 3, 'description' => 'Energikus magyar alternatív rockzenekar, amely lendületes koncertjeiről és szókimondó szövegeiről ismert. Dalaik egyszerre szórakoztatóak és elgondolkodtatóak.', 'country' => 'magyar'],
             ['name' => 'Kowalsky meg a Vega!', 'genre' => 2, 'description' => 'Egyedi hangzásvilágú zenekar, amely a rockot, popot és alternatív elemeket ötvözi. Pozitív üzenetű szövegeik és erős színpadi jelenlétük miatt rendkívül népszerűek.', 'country' => 'magyar'],
-            ['name' => 'LGT', 'genre' => 2, 'description' => 'A magyar rockzene egyik meghatározó legendája. Időtálló dalaik generációk óta meghatározó részét képezik a hazai zenei kultúrának.', 'country' => 'magyar'],
+            ['name' => 'Edda', 'genre' => 2, 'description' => 'A magyar rockzene egyik meghatározó eggyüttese. Időtálló dalaik generációk óta meghatározó részét képezik a hazai zenei kultúrának.', 'country' => 'magyar'],
             ['name' => 'Budapest Ragtime Band', 'genre' => 1, 'description' => 'A tradicionális jazz és ragtime stílus hazai képviselői, akik vidám, szórakoztató előadásaikkal minden korosztályt megszólítanak.', 'country' => 'magyar'],
             ['name' => 'Ossian!', 'genre' => 6, 'description' => 'Klasszikus magyar heavy metal zenekar, amely évtizedek óta stabil helyet foglal el a hazai rockszíntéren. Erőteljes hangzás és szenvedélyes előadás jellemzi őket.', 'country' => 'magyar'],
             ['name' => 'Moby Dick', 'genre' => 6, 'description' => 'Thrash metal zenekar, amely kemény riffjeiről és lendületes koncertjeiről ismert. Zenéjük a műfaj rajongóinak igazi csemege.', 'country' => 'magyar'],

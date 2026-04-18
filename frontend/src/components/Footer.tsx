@@ -1,11 +1,5 @@
 import { Link } from "react-router-dom";
 
-const legalLinks = [
-  { label: "Impresszum", href: "#impresszum" },
-  { label: "ÁSZF", href: "#aszf" },
-  { label: "Adatkezelés", href: "#adatkezeles" },
-];
-
 export function Footer() {
   return (
     <footer className="footer">
@@ -21,7 +15,7 @@ export function Footer() {
           <div>
             <h5>Menü</h5>
             <Link to="/concerts">Koncertek</Link>
-            <Link to="/">Kedvencek</Link>
+            <Link to="/favorites">Kedvencek</Link>
           </div>
 
           <div>
@@ -32,7 +26,7 @@ export function Footer() {
         </div>
 
         <div className="authors">
-          <br />© 2026 SEATY – Vizsgaremek UI – React + TypeScript (CRA),
+          <br />© 2026 SEATY –
           <br />Bíró Eszter &amp; Szépréthy Regina
         </div>
       </div>

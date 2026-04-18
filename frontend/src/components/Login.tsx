@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { getRole } from "../utility/Auth";
 import { useAuth } from "../hooks/useAuth";
 
-
 export function Login() {
   const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
@@ -72,18 +71,10 @@ export function Login() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <h3 style={{ margin: 0 }}>{title}</h3>
 
-            <div style={{ display: "flex", gap: 8 }}>
-              <button
-                type="button"
-                className="searchBtn"
-                onClick={() => {
-                  setError("");
-                  setMode("login");
-                }}
-                disabled={loading || mode === "login"}
-              >
-                Belépés
-              </button>
+            {/* ez a sor: szöveg + regisztráció gomb egy vonalban */}
+            <div className="authSwitchRow" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <p className="authHint">Nem regisztráltál még?</p>
+
               <button
                 type="button"
                 className="searchBtn"
@@ -100,7 +91,7 @@ export function Login() {
 
           <form
             onSubmit={handleSubmit}
-            className="searchPanel"
+            className="searchPanel authPanel"
             style={{
               gridTemplateColumns: mode === "login" ? "1fr 1fr auto" : "1fr 1fr 1fr auto",
               marginTop: 12,
@@ -137,9 +128,7 @@ export function Login() {
 
           {error && <p style={{ marginTop: 10, color: "red" }}>{error}</p>}
 
-          {mode === "register" && (
-            <p style={{ marginTop: 10, opacity: 0.8 }}></p>
-          )}
+          {mode === "register" && <p style={{ marginTop: 10, opacity: 0.8 }}></p>}
         </div>
       </div>
     </section>

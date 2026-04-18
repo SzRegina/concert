@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useConcerts } from "../../hooks/useConcerts";
 import { useSeatLayout, MultiplierKey } from "../../hooks/useSeatLayout";
 import { useCart } from "../../cart/cartProvider";
 import { API_BASE } from "../../utility/config";
 import { formatDate } from "../../utility/date";
+import { toAbsoluteUrl } from "../../utility/picsMedia";
 
 function seatId(r: number, c: number) {
   return `R${r}C${c}`;
@@ -23,14 +24,21 @@ const MULTI_UI: Record<MultiplierKey, { seatClass: string }> = {
 export function ConcertDetailsPage() {
   const params = useParams();
   const id = Number(params.id);
+
   const { concerts, loading, error } = useConcerts();
   const { addItems } = useCart();
 
   const concert = concerts.find((c) => c.id === id);
-  const { layout, seatIds, loading: layoutLoading, error: layoutError } = useSeatLayout(concert?.room_id ?? "");
+
+  const { layout, seatIds, loading: layoutLoading, error: layoutError } = useSeatLayout(
+    concert?.room_id ?? ""
+  );
 
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [reservedSeatMap, setReservedSeatMap] = useState<Record<string, boolean>>({});
+
+  // ✅ KÉP URL (Railway public) – abszolút linkké alakítjuk
+  const pictureUrl = useMemo(() => toAbsoluteUrl(concert?.picture), [concert?.picture]);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,6 +54,7 @@ export function ConcertDetailsPage() {
           headers: { Accept: "application/json" },
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const data = await res.json();
         if (cancelled || !Array.isArray(data)) return;
 
@@ -54,9 +63,10 @@ export function ConcertDetailsPage() {
           const key = seatId(Number(seat.row_number), Number(seat.column_number));
           next[key] = !!seat.reserved;
         });
+
         setReservedSeatMap(next);
-      } catch (error) {
-        console.error(error);
+      } catch (e) {
+        console.error(e);
         if (!cancelled) setReservedSeatMap({});
       }
     };
@@ -71,30 +81,54 @@ export function ConcertDetailsPage() {
   const cols = concert?.room_total_columns ?? 0;
   const basePrice = concert?.base_price ?? 0;
 
-  const priceFor = (m: MultiplierKey) => {
-    const mult = layout.multipliers[m] ?? 1;
-    return Math.round(basePrice * mult);
-  };
+  // ✅ stabil ár-számítás (hook-friendly)
+  const priceFor = useCallback(
+    (m: MultiplierKey) => {
+      const mult = layout.multipliers[m] ?? 1;
+      return Math.round(basePrice * mult);
+    },
+    [layout.multipliers, basePrice]
+  );
 
-  const seatCategory = (sid: string): MultiplierKey => {
-    return layout.seatMap[sid] ?? "M2";
-  };
+  const seatCategory = useCallback(
+    (sid: string): MultiplierKey => {
+      return layout.seatMap[sid] ?? "M2";
+    },
+    [layout.seatMap]
+  );
 
-  const seatPrice = (sid: string) => priceFor(seatCategory(sid));
+  const seatPrice = useCallback(
+    (sid: string) => priceFor(seatCategory(sid)),
+    [priceFor, seatCategory]
+  );
 
-  const toggleSeat = (sid: string) => {
-    if (!seatIds[sid] || reservedSeatMap[sid]) return;
-    setSelected((prev) => ({ ...prev, [sid]: !prev[sid] }));
-  };
+  const toggleSeat = useCallback(
+    (sid: string) => {
+      if (!seatIds[sid] || reservedSeatMap[sid]) return;
+      setSelected((prev) => ({ ...prev, [sid]: !prev[sid] }));
+    },
+    [seatIds, reservedSeatMap]
+  );
 
-  const selectedSeatIds = Object.entries(selected)
-    .filter(([k, v]) => v && !reservedSeatMap[k])
-    .map(([k]) => k);
+  const selectedSeatIds = useMemo(() => {
+    return Object.entries(selected)
+      .filter(([k, v]) => v && !reservedSeatMap[k])
+      .map(([k]) => k);
+  }, [selected, reservedSeatMap]);
 
-  const reservedCount = useMemo(() => Object.values(reservedSeatMap).filter(Boolean).length, [reservedSeatMap]);
+  const reservedCount = useMemo(
+    () => Object.values(reservedSeatMap).filter(Boolean).length,
+    [reservedSeatMap]
+  );
 
-  const addToCart = () => {
+  // ✅ Netlify lint fix: seatPrice is dependency
+  const totalSelectedPrice = useMemo(() => {
+    return selectedSeatIds.reduce((sum, sid) => sum + seatPrice(sid), 0);
+  }, [selectedSeatIds, seatPrice]);
+
+  const addToCart = useCallback(() => {
     if (!concert) return;
+
     if (selectedSeatIds.length === 0) {
       window.alert("Válassz ki legalább 1 széket.");
       return;
@@ -117,13 +151,15 @@ export function ConcertDetailsPage() {
 
     setSelected({});
     window.alert("Hozzáadva a kosárhoz.");
-  };
+  }, [concert, selectedSeatIds, addItems, seatIds, seatPrice]);
 
   if (!Number.isFinite(id)) {
     return (
       <section className="section">
         <p>Hibás koncert azonosító.</p>
-        <Link className="btn" to="/concerts">Vissza</Link>
+        <Link className="btn" to="/concerts">
+          Vissza
+        </Link>
       </section>
     );
   }
@@ -132,89 +168,110 @@ export function ConcertDetailsPage() {
     <section className="section">
       <div className="sectionHead">
         <h2>Koncert</h2>
-        <Link className="btn" to="/cart">Kosár</Link>
+        <Link className="btn" to="/cart">
+          Kosár
+        </Link>
       </div>
 
       {loading && <p>Betöltés…</p>}
       {error && <p>{error}</p>}
 
-      {!loading && !error && !concert && (
-        <p>Nem található ilyen koncert.</p>
-      )}
+      {!loading && !error && !concert && <p>Nem található ilyen koncert.</p>}
 
       {concert && (
         <>
           <div className="miniCard" style={{ marginBottom: 14, overflow: "hidden" }}>
+            {pictureUrl && (
+              <div style={{ marginBottom: 12 }}>
+                <img
+                  src={pictureUrl}
+                  alt={concert.name}
+                  style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 12 }}
+                  loading="lazy"
+                />
+              </div>
+            )}
+
             <h3 style={{ marginTop: 0 }}>{concert.name}</h3>
             <p style={{ marginBottom: 0, opacity: 0.9 }}>
               <b>Előadó:</b> {concert.performer_name} <br />
               <b>Időpont:</b> {formatDate(concert.date)} <br />
               <b>Helyszín:</b> {concert.place_name} <br />
-              <b>Alapár:</b> {basePrice} Ft
+              <b>Alapár:</b> {basePrice} Ft <br />
+              <b>Foglalt:</b> {reservedCount}
             </p>
           </div>
+
           <div className="adminStageWrap">
-          <div className="adminStage">Színpad</div>
-          {layoutLoading && <p>Kiosztás betöltése…</p>}
-          {layoutError && <p>{layoutError}</p>}
+            {layoutLoading && <p>Kiosztás betöltése…</p>}
+            {layoutError && <p>{layoutError}</p>}
 
-          <div className="adminSeatLegend" style={{ display: "flex", gap: 16, alignItems: "center" }}>
-            {(["M1", "M2", "M3"] as MultiplierKey[]).map((k) => (
-              <span key={k} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                <i className={`adminSwatch adminSwatch--SOLD ${MULTI_UI[k].seatClass.replace("adminSeat", "adminSwatch")}`} />
-                <b>{k}:</b> {priceFor(k)} Ft
-              </span>                
-            ))}
+            <div className="adminSeatLegend" style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              {(["M1", "M2", "M3"] as MultiplierKey[]).map((k) => (
+                <span key={k} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                  <i className={`adminSwatch ${MULTI_UI[k].seatClass.replace("adminSeat", "adminSwatch")}`} />
+                  <b>{k}:</b> {priceFor(k)} Ft
+                </span>
+              ))}
+            </div>
+
+            <div className="adminStage">Színpad</div>
+
+            {/* ✅ SCROLL WRAPPER: ezen scrollozol, ha nem fér ki */}
+            <div className="seatmapScroll" aria-label="Seatmap scroll wrapper">
+              <div
+                className="adminSeatGrid adminSeatGrid--details"
+                aria-label="Seatmap"
+                style={{
+                  gridTemplateColumns: `repeat(${cols || 1}, var(--seatSize))`,
+                  minWidth: `calc(${cols || 1} * var(--seatSize) + (${cols || 1} - 1) * 8px)`,
+                  marginTop: 12,
+                }}
+              >
+                {Array.from({ length: rows }).map((_, rIdx) => {
+                  const r = rIdx + 1;
+
+                  return Array.from({ length: cols }).map((__, cIdx) => {
+                    const c = cIdx + 1;
+                    const sid = seatId(r, c);
+                    const n = seatNumber(r, c, cols || 1);
+
+                    const cat = seatCategory(sid);
+                    const isSel = !!selected[sid];
+                    const existsInDb = !!seatIds[sid];
+                    const isReserved = !!reservedSeatMap[sid];
+
+                    return (
+                      <button
+                        key={sid}
+                        type="button"
+                        className={`adminSeat ${MULTI_UI[cat].seatClass} ${isSel ? "isSelected" : ""}`}
+                        onClick={() => toggleSeat(sid)}
+                        title={isReserved ? `#${n} (${sid}) • FOGLALT` : `#${n} (${sid}) • ${seatPrice(sid)} Ft`}
+                        disabled={!existsInDb || isReserved}
+                        style={{
+                          cursor: existsInDb && !isReserved ? "pointer" : "not-allowed",
+                          opacity: existsInDb ? 1 : 0.35,
+                          backgroundColor: isReserved ? "rgb(141, 3, 3)" : undefined,
+                          color: isReserved ? "white" : undefined,
+                        }}
+                      >
+                        {isReserved ? "X" : n}
+                      </button>
+                    );
+                  });
+                })}
+              </div>
+            </div>
           </div>
-          <div
-            className="adminSeatGrid adminSeatGrid--details"
-            aria-label="Seatmap"
-            style={{ gridTemplateColumns: `repeat(${cols || 1}, 1fr)`, marginTop: 12 }}
-          >
-            {Array.from({ length: rows }).map((_, rIdx) => {
-              const r = rIdx + 1;
-              return Array.from({ length: cols }).map((__, cIdx) => {
-                const c = cIdx + 1;
-                const sid = seatId(r, c);
-                const n = seatNumber(r, c, cols || 1);
 
-                const cat = seatCategory(sid);
-                const isSel = !!selected[sid];
-                const existsInDb = !!seatIds[sid];
-                const isReserved = !!reservedSeatMap[sid];
-
-                return (
-                  <button
-                    key={sid}
-                    type="button"
-                    className={`adminSeat ${MULTI_UI[cat].seatClass} ${isSel ? "isSelected" : ""}`}
-                    onClick={() => toggleSeat(sid)}
-                    title={isReserved ? `#${n} (${sid}) • FOGLALT` : `#${n} (${sid}) • ${seatPrice(sid)} Ft`}
-                    disabled={!existsInDb || isReserved}
-                    style={{
-                      cursor: existsInDb && !isReserved ? "pointer" : "not-allowed",
-                      opacity: existsInDb ? 1 : 0.35,
-                      backgroundColor: isReserved ? "rgb(141, 3, 3)" : "none",
-                      color: isReserved ? "white" : "none",
-                      position: "relative",
-                    }}
-                  >
-                    {isReserved ? "X" : n}
-                  </button>
-                );
-              });
-            })}
-          </div>
-</div>
-          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 14 }}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 14, flexWrap: "wrap" }}>
             <button className="btn" onClick={addToCart}>
               Kosárba ({selectedSeatIds.length})
             </button>
+
             <div style={{ opacity: 0.85 }}>
-              Összesen:{" "}
-              <b>
-                {selectedSeatIds.reduce((sum, sid) => sum + seatPrice(sid), 0)} Ft
-              </b>
+              Összesen: <b>{totalSelectedPrice} Ft</b>
             </div>
           </div>
         </>

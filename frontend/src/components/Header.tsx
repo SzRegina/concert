@@ -11,20 +11,32 @@ type HeaderProps = {
 
 export function Header({ user, onLogout }: HeaderProps) {
   const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const mobileRef = useRef<HTMLDivElement | null>(null);
+
   const role = getRole(user);
   const profileBase = role === 0 ? "/admin" : role === 2 ? "/user" : "/";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) {
+      const t = event.target as Node;
+
+      // Profil menü csukás
+      if (open && menuRef.current && !menuRef.current.contains(t)) {
         setOpen(false);
+      }
+
+      // Mobil menü csukás
+      if (mobileOpen && mobileRef.current && !mobileRef.current.contains(t)) {
+        setMobileOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [open, mobileOpen]);
 
   const isAdmin = role === 0;
 
@@ -48,13 +60,90 @@ export function Header({ user, onLogout }: HeaderProps) {
             <img src="/cart.png" alt="Kosár" className="cartIcon cartIcon--header" />
           </Link>
         )}
+
         <ThemeToggle />
+
+        {/* ✅ 520 ALATT: MOBIL MENÜ (ugyanazzal a profileMenu stílussal) */}
+        {!isAdmin && (
+          <div className="mobileOnly" ref={mobileRef} style={{ position: "relative" }}>
+            <button
+              className="pill"
+              type="button"
+              onClick={() => setMobileOpen((prev) => !prev)}
+              aria-expanded={mobileOpen}
+              aria-haspopup="menu"
+            >
+              Menü
+            </button>
+
+            {mobileOpen && (
+              <div className="miniCard profileMenu" role="menu">
+                <div className="profileMenu__actions">
+                  <NavLink className="btn" to="/concerts" onClick={() => setMobileOpen(false)}>
+                    Koncertek
+                  </NavLink>
+                  <NavLink className="btn" to="/favorites" onClick={() => setMobileOpen(false)}>
+                    Kedvencek
+                  </NavLink>
+
+                  <div style={{ height: 1, background: "var(--line)", margin: "6px 0" }} />
+
+                  {!user ? (
+                    <Link className="btn" to="/login" onClick={() => setMobileOpen(false)}>
+                      Bejelentkezés
+                    </Link>
+                  ) : (
+                    <>
+                      {role === 2 && (
+                        <>
+                          <Link
+                            className="btn"
+                            to={`${profileBase}/personal`}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            Adataim
+                          </Link>
+                          <Link
+                            className="btn"
+                            to={`${profileBase}/orders`}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            Vásárlásaim
+                          </Link>
+                        </>
+                      )}
+
+                      {role === 0 && (
+                        <Link className="btn" to="/admin" onClick={() => setMobileOpen(false)}>
+                          Admin felület
+                        </Link>
+                      )}
+
+                      <button
+                        className="btn"
+                        type="button"
+                        onClick={() => {
+                          setMobileOpen(false);
+                          onLogout();
+                        }}
+                      >
+                        Kilépés
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ✅ Desktop bejelentkezés / profil menü (marad a mostani logika) */}
         {!user ? (
-          <Link to="/login" className="pill">
+          <Link to="/login" className="pill desktopOnly">
             Bejelentkezés
           </Link>
         ) : (
-          <>
+          <div className="desktopOnly">
             <button className="pill" type="button" onClick={() => setOpen((prev) => !prev)}>
               Profil
             </button>
@@ -94,7 +183,7 @@ export function Header({ user, onLogout }: HeaderProps) {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
