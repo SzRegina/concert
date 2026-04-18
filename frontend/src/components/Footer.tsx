@@ -15,7 +15,7 @@ export function Footer() {
           <div>
             <h5>Menü</h5>
             <Link to="/concerts">Koncertek</Link>
-            <Link to="/">Kedvencek</Link>
+            <Link to="/favorites">Kedvencek</Link>
           </div>
 
           <div>
