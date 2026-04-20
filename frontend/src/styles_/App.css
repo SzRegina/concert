@@ -733,7 +733,7 @@ footer{
   :root{ --seatSize: 36px; }
 }
 @media (max-width: 420px){
-  :root{ --seatSize: 25px; }
+  :root{ --seatSize: 30px; }
 }
 
 @media (max-width: 980px){
