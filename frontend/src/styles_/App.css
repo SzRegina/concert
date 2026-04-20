@@ -637,11 +637,11 @@ footer{
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   -webkit-overflow-scrolling:touch;
 
-  /* ez a kulcs: a tartalmat középre húzza, ha kifér */
-  display: flex;
+ 
+  display: block;
   justify-content: center;
 
   padding: 6px 6px 10px;
@@ -650,9 +650,10 @@ footer{
 /* ✅ Details grid: mindig tartalom-széles, sose 100% */
 /* A grid maga legyen "content-sized", hogy scroll esetén legyen mit scrollozni */
 .adminSeatGrid--details{
-  width: max-content;     /* a grid szélessége a seat oszlopokból áll össze */
+  width: max-content;     
   max-width: none;
-  margin: 0 auto;         /* ha a wrapper nem flex lenne, ez is segít */
+  margin: 0 auto;    
+  grid: content-fit;     
 }          
 
 
@@ -732,7 +733,7 @@ footer{
   :root{ --seatSize: 36px; }
 }
 @media (max-width: 420px){
-  :root{ --seatSize: 10px; }
+  :root{ --seatSize: 25px; }
 }
 
 @media (max-width: 980px){
